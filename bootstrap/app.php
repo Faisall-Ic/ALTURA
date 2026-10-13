@@ -1,9 +1,16 @@
 <?php
 
+use App\Http\Middleware\AutoEnrollmentAccess;
+use App\Http\Middleware\EnsureActiveStudent;
+use App\Http\Middleware\EnsureStudentMentorLocked;
+use App\Http\Middleware\RedirectIfAuthenticatedByRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,7 +19,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'redirect_by_role' => RedirectIfAuthenticatedByRole::class,
+            'active_student' => EnsureActiveStudent::class,
+            'mentor_locked' => EnsureStudentMentorLocked::class,
+            'auto_enrollment' => AutoEnrollmentAccess::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
