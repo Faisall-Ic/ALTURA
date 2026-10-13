@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->foreignId('mentor_id')->constrained('teachers')->restrictOnDelete();
-            $table->foreignId('speaking_task_id')->constrained('speaking_tasks')->restrictOnDelete();
+            $table->enum('task_type', ['storytelling', 'wacana'])->default('storytelling');
+            $table->foreignId('speaking_task_id')->nullable()->constrained('speaking_tasks')->nullOnDelete();
             $table->date('booking_date');
             $table->string('time_slot', 30);
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');

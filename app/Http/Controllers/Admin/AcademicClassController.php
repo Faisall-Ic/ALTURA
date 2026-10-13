@@ -58,7 +58,12 @@ class AcademicClassController extends Controller
             'major_id' => ['required', 'exists:majors,id'],
             'name' => ['required', 'string', 'max:100'],
             'code' => ['required', 'string', 'max:20', 'unique:academic_classes,code'],
+            'grade_level' => ['nullable', 'integer', 'in:10,11,12'],
+            'is_tka_active' => ['nullable'],
         ]);
+
+        $validated['grade_level'] = (int) ($validated['grade_level'] ?? 12);
+        $validated['is_tka_active'] = $request->has('is_tka_active') ? $request->boolean('is_tka_active') : true;
 
         AcademicClass::create($validated);
 
@@ -88,7 +93,12 @@ class AcademicClassController extends Controller
             'major_id' => ['required', 'exists:majors,id'],
             'name' => ['required', 'string', 'max:100'],
             'code' => ['required', 'string', 'max:20', 'unique:academic_classes,code,'.$kela->id],
+            'grade_level' => ['nullable', 'integer', 'in:10,11,12'],
+            'is_tka_active' => ['nullable'],
         ]);
+
+        $validated['grade_level'] = (int) ($validated['grade_level'] ?? $kela->grade_level ?? 12);
+        $validated['is_tka_active'] = $request->has('is_tka_active') ? $request->boolean('is_tka_active') : $kela->is_tka_active;
 
         $kela->update($validated);
 

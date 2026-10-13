@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\SpeakingAssessment;
 use App\Models\SpeakingBooking;
 use App\Models\SpeakingTask;
+use App\Models\StorytellingScript;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Models\WacanaScript;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -60,13 +63,44 @@ class SpeakingTaskSeeder extends Seeder
             ]
         );
 
+        // Seed StorytellingScript & WacanaScript tables
+        StorytellingScript::firstOrCreate(
+            ['title' => 'The Legend of Rawa Pening'],
+            [
+                'script_text' => $task1->script_text,
+                'target_duration_minutes' => 3,
+            ]
+        );
+        StorytellingScript::firstOrCreate(
+            ['title' => 'The Legend of Tangkuban Perahu'],
+            [
+                'script_text' => $task2->script_text,
+                'target_duration_minutes' => 4,
+            ]
+        );
+
+        WacanaScript::firstOrCreate(
+            ['title' => 'Artificial Intelligence in High School Education'],
+            [
+                'script_text' => 'The exponential proliferation of generative artificial intelligence is fundamentally transforming the landscape of secondary education...',
+                'paragraph_count' => 3,
+            ]
+        );
+        WacanaScript::firstOrCreate(
+            ['title' => 'Sustainable Energy Transition in Developing Economies'],
+            [
+                'script_text' => 'Transitioning toward sustainable renewable energy represents one of the most pressing socio-economic imperatives of the twenty-first century...',
+                'paragraph_count' => 3,
+            ]
+        );
+
         // Seed 1 completed booking & 1 upcoming booking for test student
         $student = Student::first();
         $teacher = Teacher::first();
 
         if ($student && $teacher) {
             // Completed oral exam
-            SpeakingBooking::firstOrCreate(
+            $completedBooking = SpeakingBooking::firstOrCreate(
                 [
                     'student_id' => $student->id,
                     'speaking_task_id' => $task1->id,
@@ -74,6 +108,7 @@ class SpeakingTaskSeeder extends Seeder
                 ],
                 [
                     'mentor_id' => $student->mentor_id,
+                    'task_type' => 'storytelling',
                     'time_slot' => '15:30 - 16:00',
                     'status' => 'completed',
                     'grade' => 88.00,
@@ -86,6 +121,21 @@ class SpeakingTaskSeeder extends Seeder
                 ]
             );
 
+            // Create assessment record
+            SpeakingAssessment::firstOrCreate(
+                ['booking_id' => $completedBooking->id],
+                [
+                    'grade' => 88.00,
+                    'rubric_scores' => [
+                        'pronunciation' => 22,
+                        'fluency' => 23,
+                        'vocabulary' => 21,
+                        'comprehension' => 22,
+                    ],
+                    'notes' => 'Pelafalan fonetik intonasi sangat natural. Alur penceritaan hidup dan ekspresif.',
+                ]
+            );
+
             // Upcoming booked oral exam
             SpeakingBooking::firstOrCreate(
                 [
@@ -95,6 +145,7 @@ class SpeakingTaskSeeder extends Seeder
                 ],
                 [
                     'mentor_id' => $student->mentor_id,
+                    'task_type' => 'storytelling',
                     'time_slot' => '16:00 - 16:30',
                     'status' => 'pending',
                 ]

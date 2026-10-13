@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SpeakingBooking extends Model
 {
@@ -18,6 +19,7 @@ class SpeakingBooking extends Model
     protected $fillable = [
         'student_id',
         'mentor_id',
+        'task_type',
         'speaking_task_id',
         'booking_date',
         'time_slot',
@@ -71,5 +73,13 @@ class SpeakingBooking extends Model
     public function speakingTask(): BelongsTo
     {
         return $this->belongsTo(SpeakingTask::class, 'speaking_task_id');
+    }
+
+    /**
+     * Get the assessment record for this booking.
+     */
+    public function assessment(): HasOne
+    {
+        return $this->hasOne(SpeakingAssessment::class, 'booking_id');
     }
 }

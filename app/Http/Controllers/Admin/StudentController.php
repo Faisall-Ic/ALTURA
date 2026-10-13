@@ -102,6 +102,7 @@ class StudentController extends Controller
                 'parent_phone_number' => $validated['parent_phone_number'],
                 'status_active' => $statusActive,
                 'qr_identity_token' => $qrToken,
+                'qr_code_token' => $qrToken,
             ]);
         });
 

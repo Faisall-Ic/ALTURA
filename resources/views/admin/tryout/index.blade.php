@@ -8,11 +8,11 @@
                 <div>
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-soft text-brand-primary border border-brand-primary/20 mb-3">
                         <span class="w-2 h-2 rounded-full bg-brand-primary animate-pulse"></span>
-                        Pengaturan Ujian &amp; Auto-Enrollment
+                        Simulasi UTBK &amp; Subtes SNBT
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-neutral-text">Manajemen Paket Tryout SNBT <i class="fa-solid fa-bullseye ml-1 text-amber-accent"></i></h1>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-neutral-text">Manajemen Paket Tryout SNBT <i class="fa-solid fa-bullseye ml-1 text-amber-500"></i></h1>
                     <p class="text-neutral-muted text-sm mt-1">
-                        Kelola jadwal tryout akbar, aktivasikan paket ujian, dan pantau partisipasi peserta siswa.
+                        Kelola paket tryout akbar, subtes ujian (TPS, Literasi Indo/Inggris, PM), dan jadwal pengerjaan siswa.
                     </p>
                 </div>
                 <div>
@@ -26,56 +26,68 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Table of Tryouts (2 Cols) -->
             <div class="lg:col-span-2 bg-white border border-neutral-border rounded-2xl p-6 shadow-xs">
-                <h2 class="text-lg font-bold text-neutral-text mb-4">Daftar Paket Tryout</h2>
+                <h2 class="text-lg font-bold text-neutral-text mb-4">Daftar Paket Tryout & Subtes</h2>
 
                 @if ($tryouts->isNotEmpty())
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-neutral-text">
-                            <thead class="text-xs uppercase bg-neutral-subtle/70 text-neutral-muted border-b border-neutral-border font-semibold">
-                                <tr>
-                                    <th class="px-4 py-3">Judul Paket</th>
-                                    <th class="px-4 py-3">Periode Pelaksanaan</th>
-                                    <th class="px-4 py-3 text-center">Peserta</th>
-                                    <th class="px-4 py-3">Status</th>
-                                    <th class="px-4 py-3 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-neutral-border">
-                                @foreach ($tryouts as $to)
-                                    <tr class="hover:bg-neutral-subtle/50 transition-colors">
-                                        <td class="px-4 py-3.5 font-bold text-neutral-text">
-                                            {{ $to->title }}
-                                        </td>
-                                        <td class="px-4 py-3.5 text-xs text-neutral-muted">
-                                            {{ $to->date_start->format('d M Y') }} — {{ $to->date_end->format('d M Y') }}
-                                        </td>
-                                        <td class="px-4 py-3.5 text-center font-bold text-brand-primary">
-                                            {{ $to->tryout_scores_count }} Siswa
-                                        </td>
-                                        <td class="px-4 py-3.5">
-                                            @if ($to->is_active)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                                    Aktif
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-neutral-subtle text-neutral-muted border border-neutral-border">
-                                                    Nonaktif
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-4 py-3.5 text-right">
-                                            <form method="POST" action="{{ route('admin.tryout.destroy', $to->id) }}" onsubmit="return confirm('Hapus paket tryout ini?')" class="inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-xs text-red-accent hover:text-red-accent-text font-semibold transition-colors">
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="space-y-4">
+                        @foreach ($tryouts as $to)
+                            <div class="p-4 rounded-xl border border-neutral-border bg-surface hover:border-brand-primary/40 transition-all">
+                                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-soft text-brand-primary border border-brand-primary/20 font-mono">
+                                                {{ $to->batch_name ?? 'Batch' }}
+                                            </span>
+                                            <h3 class="font-bold text-neutral-text text-sm">{{ $to->title }}</h3>
+                                        </div>
+                                        <p class="text-xs text-neutral-muted mt-1 font-mono">
+                                            <i class="fa-regular fa-calendar text-[11px] mr-1"></i>{{ $to->date_start->format('d M Y') }} — {{ $to->date_end->format('d M Y') }}
+                                        </p>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        @if ($to->is_active)
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                Aktif
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-neutral-subtle text-neutral-muted border border-neutral-border">
+                                                Nonaktif
+                                            </span>
+                                        @endif
+
+                                        <form method="POST" action="{{ route('admin.tryout.destroy', $to->id) }}" onsubmit="return confirm('Hapus paket tryout ini?')" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-1.5 text-neutral-muted hover:text-red-accent rounded-lg transition-colors cursor-pointer">
+                                                <i class="fa-solid fa-trash-can text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Subtests display -->
+                                <div class="mt-3 pt-3 border-t border-neutral-border/60">
+                                    <div class="text-[11px] font-semibold text-neutral-muted uppercase mb-1.5">
+                                        Subtes Terdaftar ({{ $to->subtests->count() }}):
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5">
+                                        @forelse ($to->subtests as $subtest)
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium bg-neutral-subtle text-neutral-text border border-neutral-border">
+                                                <span>{{ $subtest->name }}</span>
+                                                <span class="text-[10px] text-neutral-muted">({{ $subtest->question_count }} soal &bull; {{ $subtest->duration_minutes }}m)</span>
+                                            </span>
+                                        @empty
+                                            <span class="text-[11px] text-neutral-muted italic">Belum ada subtes</span>
+                                        @endforelse
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 flex items-center justify-between text-xs text-neutral-muted font-mono">
+                                    <span>Peserta Selesai: <strong class="text-brand-primary">{{ $to->tryout_scores_count }} Siswa</strong></span>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
 
                     <div class="mt-4">
@@ -89,23 +101,30 @@
             <!-- Create Form (1 Col) -->
             <div class="space-y-6">
                 <div class="bg-white border border-neutral-border rounded-2xl p-6 shadow-xs">
-                    <h3 class="text-base font-bold text-neutral-text mb-1 flex items-center gap-1.5"><i class="fa-solid fa-plus text-brand-primary"></i> Buat Paket Tryout Baru</h3>
-                    <p class="text-xs text-neutral-muted mb-4">Semua siswa aktif akan otomatis terdaftar via auto-enrollment.</p>
+                    <h3 class="text-base font-bold text-neutral-text mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-brand-primary"></i> Buat Paket Tryout Baru
+                    </h3>
+                    <p class="text-xs text-neutral-muted mb-4">Secara otomatis menyertakan 4 subtes standar UTBK.</p>
 
                     <form method="POST" action="{{ route('admin.tryout.store') }}" class="space-y-3">
                         @csrf
                         <div>
-                            <label class="block text-xs font-semibold text-neutral-text mb-1">Judul Paket Ujian</label>
-                            <input type="text" name="title" required placeholder="Contoh: Tryout Akbar UTBK-SNBT Seri 3" class="w-full bg-surface border border-neutral-border rounded-lg p-2.5 text-xs text-neutral-text focus:outline-none focus:border-brand-primary">
+                            <label class="block text-xs font-semibold text-neutral-text mb-1">Judul Paket Ujian <span class="text-red-accent">*</span></label>
+                            <input type="text" name="title" required placeholder="Contoh: Tryout Akbar UTBK-SNBT Seri 1" class="w-full bg-surface border border-neutral-border rounded-lg p-2.5 text-xs text-neutral-text focus:outline-none focus:border-brand-primary">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-neutral-text mb-1">Tanggal Mulai</label>
+                            <label class="block text-xs font-semibold text-neutral-text mb-1">Nama Batch / Gelombang</label>
+                            <input type="text" name="batch_name" placeholder="Contoh: Batch SNBT 2026 Gelombang 1" class="w-full bg-surface border border-neutral-border rounded-lg p-2.5 text-xs text-neutral-text focus:outline-none focus:border-brand-primary">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-neutral-text mb-1">Tanggal Mulai <span class="text-red-accent">*</span></label>
                             <input type="date" name="date_start" required value="{{ now()->toDateString() }}" class="w-full bg-surface border border-neutral-border rounded-lg p-2.5 text-xs text-neutral-text focus:outline-none focus:border-brand-primary">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-neutral-text mb-1">Tanggal Berakhir</label>
+                            <label class="block text-xs font-semibold text-neutral-text mb-1">Tanggal Berakhir <span class="text-red-accent">*</span></label>
                             <input type="date" name="date_end" required value="{{ now()->addDays(7)->toDateString() }}" class="w-full bg-surface border border-neutral-border rounded-lg p-2.5 text-xs text-neutral-text focus:outline-none focus:border-brand-primary">
                         </div>
 

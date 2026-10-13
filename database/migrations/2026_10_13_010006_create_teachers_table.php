@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('alter_courses', function (Blueprint $table) {
+        Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 150);
-            $table->foreignId('major_id')->constrained('majors')->cascadeOnDelete();
-            $table->boolean('is_snbt_core')->default(false);
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
+            $table->string('nip', 50)->nullable()->unique();
+            $table->string('phone_number', 25)->nullable();
+            $table->string('specialization_subject', 100)->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('alter_courses');
+        Schema::dropIfExists('teachers');
     }
 };

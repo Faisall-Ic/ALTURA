@@ -19,9 +19,10 @@ return new class extends Migration
             $table->foreignId('class_id')->constrained('academic_classes')->restrictOnDelete();
             $table->foreignId('mentor_id')->constrained('teachers')->restrictOnDelete();
             $table->foreignId('counselor_id')->constrained('users')->restrictOnDelete();
-            $table->string('parent_phone_number', 25);
+            $table->string('parent_phone_number', 25)->nullable();
             $table->boolean('status_active')->default(true);
             $table->string('qr_identity_token', 64)->unique();
+            $table->string('qr_code_token', 64)->nullable()->unique();
             $table->timestamps();
 
             $table->index('mentor_id', 'idx_students_mentor');

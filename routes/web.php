@@ -1,9 +1,17 @@
 <?php
 
 use App\Http\Controllers\Admin\AcademicClassController;
+use App\Http\Controllers\Admin\AlterLmsController;
+use App\Http\Controllers\Admin\CounselingSlotController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\EnglishMasteryController;
+use App\Http\Controllers\Admin\HomeworkAssignmentController;
+use App\Http\Controllers\Admin\LessonScheduleController;
 use App\Http\Controllers\Admin\MajorController;
+use App\Http\Controllers\Admin\ParentController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\SubjectConsultationController;
+use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\TryoutController as AdminTryoutController;
 use App\Http\Controllers\Admin\WhatsAppGatewayController as AdminWhatsAppGatewayController;
@@ -212,15 +220,67 @@ Route::middleware('auth')->group(function () {
             // Master Data
             Route::resource('jurusan', MajorController::class);
             Route::resource('kelas', AcademicClassController::class);
+            Route::resource('mata-pelajaran', SubjectController::class);
             Route::resource('guru', TeacherController::class);
+            Route::resource('orang-tua', ParentController::class);
             Route::get('siswa/export-csv', [StudentController::class, 'exportCsv'])->name('siswa.export');
             Route::post('siswa/import-excel', [StudentController::class, 'importExcel'])->name('siswa.import');
             Route::resource('siswa', StudentController::class);
 
-            // Phase 6: Paket Tryout
+            // Operasional Akademik
+            Route::resource('jadwal', LessonScheduleController::class);
+            Route::get('tugas/{tuga}/submissions', [HomeworkAssignmentController::class, 'submissions'])->name('tugas.submissions');
+            Route::post('tugas/grade/{submission}', [HomeworkAssignmentController::class, 'gradeSubmission'])->name('tugas.grade');
+            Route::resource('tugas', HomeworkAssignmentController::class);
+
+            // Konten & Kurikulum (ALTER LMS, English Mastery, Tryout)
+            Route::prefix('alter')->name('alter.')->group(function () {
+                Route::get('/', [AlterLmsController::class, 'index'])->name('index');
+                Route::get('/create', [AlterLmsController::class, 'createCourse'])->name('create');
+                Route::post('/', [AlterLmsController::class, 'storeCourse'])->name('store');
+                Route::get('/{course}', [AlterLmsController::class, 'showCourse'])->name('show');
+                Route::get('/{course}/edit', [AlterLmsController::class, 'editCourse'])->name('edit');
+                Route::put('/{course}', [AlterLmsController::class, 'updateCourse'])->name('update');
+                Route::delete('/{course}', [AlterLmsController::class, 'destroyCourse'])->name('destroy');
+                Route::post('/{course}/chapters', [AlterLmsController::class, 'storeChapter'])->name('chapter.store');
+                Route::put('/chapters/{chapter}', [AlterLmsController::class, 'updateChapter'])->name('chapter.update');
+                Route::delete('/chapters/{chapter}', [AlterLmsController::class, 'destroyChapter'])->name('chapter.destroy');
+                Route::post('/chapters/{chapter}/problems', [AlterLmsController::class, 'storeProblem'])->name('problem.store');
+                Route::delete('/problems/{problem}', [AlterLmsController::class, 'destroyProblem'])->name('problem.destroy');
+            });
+
+            Route::prefix('english')->name('english.')->group(function () {
+                Route::get('/', [EnglishMasteryController::class, 'index'])->name('index');
+                Route::post('/vocab', [EnglishMasteryController::class, 'storeVocabWord'])->name('vocab.store');
+                Route::delete('/vocab/{word}', [EnglishMasteryController::class, 'destroyVocabWord'])->name('vocab.destroy');
+                Route::post('/storytelling', [EnglishMasteryController::class, 'storeStorytelling'])->name('storytelling.store');
+                Route::put('/storytelling/{script}', [EnglishMasteryController::class, 'updateStorytelling'])->name('storytelling.update');
+                Route::delete('/storytelling/{script}', [EnglishMasteryController::class, 'destroyStorytelling'])->name('storytelling.destroy');
+                Route::post('/wacana', [EnglishMasteryController::class, 'storeWacana'])->name('wacana.store');
+                Route::put('/wacana/{script}', [EnglishMasteryController::class, 'updateWacana'])->name('wacana.update');
+                Route::delete('/wacana/{script}', [EnglishMasteryController::class, 'destroyWacana'])->name('wacana.destroy');
+            });
+
+            Route::post('tryout/{tryout}/subtests', [AdminTryoutController::class, 'storeSubtest'])->name('tryout.subtest.store');
+            Route::delete('tryout/subtests/{subtest}', [AdminTryoutController::class, 'destroySubtest'])->name('tryout.subtest.destroy');
             Route::resource('tryout', AdminTryoutController::class);
 
-            // Phase 6: WhatsApp Gateway
+            // Layanan Konsultasi Terpisah (Mapel vs BK)
+            Route::prefix('konsultasi-mapel')->name('konsultasi-mapel.')->group(function () {
+                Route::get('/', [SubjectConsultationController::class, 'index'])->name('index');
+                Route::post('/', [SubjectConsultationController::class, 'store'])->name('store');
+                Route::delete('/{slot}', [SubjectConsultationController::class, 'destroy'])->name('destroy');
+                Route::post('/booking/{booking}/status', [SubjectConsultationController::class, 'updateBookingStatus'])->name('booking-status');
+            });
+
+            Route::prefix('konseling-bk')->name('konseling-bk.')->group(function () {
+                Route::get('/', [CounselingSlotController::class, 'index'])->name('index');
+                Route::post('/', [CounselingSlotController::class, 'store'])->name('store');
+                Route::delete('/{slot}', [CounselingSlotController::class, 'destroy'])->name('destroy');
+                Route::post('/booking/{booking}/status', [CounselingSlotController::class, 'updateBookingStatus'])->name('booking-status');
+            });
+
+            // WhatsApp Gateway
             Route::get('/whatsapp', [AdminWhatsAppGatewayController::class, 'index'])->name('whatsapp.index');
             Route::post('/whatsapp/test', [AdminWhatsAppGatewayController::class, 'testSend'])->name('whatsapp.test');
         });

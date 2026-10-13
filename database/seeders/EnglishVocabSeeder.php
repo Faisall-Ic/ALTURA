@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Student;
+use App\Models\VocabModule;
 use App\Models\VocabQuizResult;
 use App\Models\VocabWord;
 use Illuminate\Database\Seeder;
@@ -437,6 +438,17 @@ class EnglishVocabSeeder extends Seeder
                 ['process', 'proses / memproses', 'Cognitive processing speed improves with regular reading drill.'],
             ],
         ];
+
+        for ($m = 1; $m <= 8; $m++) {
+            VocabModule::firstOrCreate(
+                ['module_number' => $m],
+                [
+                    'title' => "Modul Kosakata {$m}",
+                    'description' => "Evaluasi CBT Kosakata Akademik Bahasa Inggris Modul {$m} (50 Kata).",
+                    'target_word_count' => 50,
+                ]
+            );
+        }
 
         foreach ($modulesData as $moduleNum => $words) {
             foreach ($words as $w) {

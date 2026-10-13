@@ -3,28 +3,36 @@
 
     <div class="space-y-6">
         <!-- Welcome Hero Banner -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-neutral-border/80 p-6 sm:p-8 shadow-sm">
-            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-blue via-accent-gold to-brand-blue"></div>
-            
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-neutral-border shadow-xs p-6 sm:p-8">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-3">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <i class="fa-solid fa-circle-check text-[10px]"></i>
-                        Status Siswa Aktif • Bebas Paywall
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Status Siswa Aktif
+                        </span>
+                        @if ($isTkaActive)
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-brand-primary border border-brand-primary/20">
+                                <i class="fa-solid fa-graduation-cap text-[10px]"></i> Kurikulum TKA + SNBT Aktif
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-300">
+                                <i class="fa-solid fa-bullseye text-[10px]"></i> Mode Fokus UTBK / SNBT (TKA Dinonaktifkan)
+                            </span>
+                        @endif
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-neutral-dark tracking-tight">Selamat Datang, {{ $user->name }}!</h1>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-neutral-text">Selamat Datang, {{ $user->name }}</h1>
                     <p class="text-neutral-muted text-sm mt-1">
-                        Portal Akademik &amp; Pembelajaran Mandiri — Bimbingan Belajar Alto
+                        Portal Akademik &amp; Pembelajaran Mandiri ALTURA — Kelas {{ $student?->academicClass?->name ?? 'Reguler' }}
                     </p>
                 </div>
 
                 @if ($student)
-                    <div class="bg-[#FFFAF3] border border-neutral-border rounded-xl p-4 text-xs space-y-1.5 min-w-[260px] shadow-2xs">
-                        <div class="text-neutral-muted">NISN: <span class="text-neutral-dark font-mono font-bold">{{ $student->nisn }}</span></div>
-                        <div class="text-neutral-muted">Kelas: <span class="text-neutral-dark font-semibold">{{ $student->academicClass?->name }} ({{ $student->major?->name }})</span></div>
-                        <div class="text-neutral-muted">Mentor: <span class="text-brand-blue font-bold">{{ $student->mentor?->user?->name }}</span></div>
-                        <div class="text-neutral-muted">Guru BK: <span class="text-purple-700 font-bold">{{ $student->counselor?->name }}</span></div>
+                    <div class="bg-surface border border-neutral-border rounded-xl p-4 text-xs space-y-1.5 min-w-[260px] shadow-2xs">
+                        <div class="text-neutral-muted">NISN: <span class="text-neutral-text font-mono font-bold">{{ $student->nisn }}</span></div>
+                        <div class="text-neutral-muted">Jurusan: <span class="text-neutral-text font-semibold">{{ $student->major?->name }}</span></div>
+                        <div class="text-neutral-muted">Guru Mentor: <span class="text-brand-primary font-bold">{{ $student->mentor?->user?->name ?? 'Belum Ditentukan' }}</span></div>
+                        <div class="text-neutral-muted">Guru BK: <span class="text-purple-700 font-bold">{{ $student->counselor?->name ?? 'Kak Nisa' }}</span></div>
                     </div>
                 @endif
             </div>
@@ -32,58 +40,130 @@
 
         <!-- Metric Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white rounded-xl shadow-sm border border-neutral-border/60 p-5">
+            <div class="bg-white rounded-2xl shadow-xs border border-neutral-border p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Presensi QR</span>
-                    <span class="p-2.5 rounded-lg bg-emerald-50 text-emerald-600">
-                        <i class="fa-solid fa-qrcode text-lg"></i>
+                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Jadwal Kelas</span>
+                    <span class="p-2.5 rounded-xl bg-blue-50 text-brand-primary">
+                        <i class="fa-solid fa-calendar-days text-base"></i>
                     </span>
                 </div>
                 <div class="mt-4">
-                    <div class="text-2xl font-extrabold text-neutral-dark">100%</div>
-                    <span class="text-xs text-emerald-700 font-semibold inline-flex items-center gap-1.5 mt-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Kehadiran Normal
-                    </span>
+                    <div class="text-2xl font-bold text-neutral-text">{{ $schedules->count() }} Sesi</div>
+                    <span class="text-xs text-neutral-muted font-medium block mt-1">Jadwal Mingguan</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-neutral-border/60 p-5">
+            <div class="bg-white rounded-2xl shadow-xs border border-neutral-border p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">ALTER LMS</span>
-                    <span class="p-2.5 rounded-lg bg-blue-50 text-brand-blue">
-                        <i class="fa-solid fa-laptop-code text-lg"></i>
+                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Tugas Rumah</span>
+                    <span class="p-2.5 rounded-xl bg-amber-50 text-amber-700">
+                        <i class="fa-solid fa-book-open text-base"></i>
                     </span>
                 </div>
                 <div class="mt-4">
-                    <div class="text-2xl font-extrabold text-neutral-dark">Auto-Enrolled</div>
-                    <span class="text-xs text-brand-blue font-semibold block mt-1">Jurusan {{ $student?->major?->name }}</span>
+                    <div class="text-2xl font-bold text-neutral-text">{{ $assignments->count() }} Tugas</div>
+                    <span class="text-xs text-neutral-muted font-medium block mt-1">Perlu Dikerjakan</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-neutral-border/60 p-5">
+            <div class="bg-white rounded-2xl shadow-xs border border-neutral-border p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">English Mastery</span>
-                    <span class="p-2.5 rounded-lg bg-amber-50 text-accent-gold">
-                        <i class="fa-solid fa-spell-check text-lg"></i>
+                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Mata Pelajaran</span>
+                    <span class="p-2.5 rounded-xl bg-emerald-50 text-emerald-700">
+                        <i class="fa-solid fa-layer-group text-base"></i>
                     </span>
                 </div>
                 <div class="mt-4">
-                    <div class="text-2xl font-extrabold text-neutral-dark">400 Kata</div>
-                    <span class="text-xs text-accent-gold font-semibold block mt-1">CBT Vocab &amp; Oral Rubric</span>
+                    <div class="text-2xl font-bold text-neutral-text">{{ $activeSubjects->count() }} Mapel</div>
+                    <span class="text-xs text-neutral-muted font-medium block mt-1">{{ $isTkaActive ? 'SNBT + TKA' : 'SNBT Subtes Saja' }}</span>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-neutral-border/60 p-5">
+            <div class="bg-white rounded-2xl shadow-xs border border-neutral-border p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Tryout SNBT</span>
-                    <span class="p-2.5 rounded-lg bg-purple-50 text-purple-700">
-                        <i class="fa-solid fa-chart-line text-lg"></i>
+                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Presensi Siswa</span>
+                    <span class="p-2.5 rounded-xl bg-purple-50 text-purple-700">
+                        <i class="fa-solid fa-qrcode text-base"></i>
                     </span>
                 </div>
                 <div class="mt-4">
-                    <div class="text-2xl font-extrabold text-neutral-dark">Aktif</div>
-                    <span class="text-xs text-purple-700 font-semibold block mt-1">Subtes Terintegrasi</span>
+                    <a href="{{ route('siswa.presensi.qr') }}" class="text-xs font-bold text-brand-primary hover:underline block">
+                        Tampilkan QR Presensi &rarr;
+                    </a>
+                    <span class="text-[11px] text-neutral-muted mt-1 block">Scan saat sesi bimbel</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- 2 Column: Schedules & Homework -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Schedule Section -->
+            <div class="bg-white border border-neutral-border rounded-2xl p-6 shadow-xs space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-base font-bold text-neutral-text flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-brand-primary"></i> Jadwal Belajar Mingguan
+                    </h2>
+                    <span class="text-xs text-neutral-muted">{{ $student?->academicClass?->name }}</span>
+                </div>
+
+                @if ($schedules->isNotEmpty())
+                    <div class="space-y-2.5">
+                        @foreach ($schedules as $sched)
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-neutral-border bg-surface text-xs">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-neutral-text">{{ $sched->day_of_week }}</span>
+                                        <span class="text-[11px] text-brand-primary font-mono font-semibold">
+                                            {{ \Illuminate\Support\Str::substr($sched->time_start, 0, 5) }} - {{ \Illuminate\Support\Str::substr($sched->time_end, 0, 5) }}
+                                        </span>
+                                    </div>
+                                    <div class="font-medium text-neutral-text mt-0.5">{{ $sched->subject?->name }}</div>
+                                    <div class="text-[11px] text-neutral-muted">
+                                        Guru: {{ $sched->teacher?->user?->name ?? 'Pengajar' }} &bull; Ruang: {{ $sched->room }}
+                                    </div>
+                                </div>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-brand-soft text-brand-primary border border-brand-primary/20">
+                                    {{ $sched->subject?->code }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-neutral-muted py-6 text-center">Belum ada jadwal belajar yang terdaftar untuk kelas ini.</p>
+                @endif
+            </div>
+
+            <!-- Homework Assignments Section -->
+            <div class="bg-white border border-neutral-border rounded-2xl p-6 shadow-xs space-y-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-base font-bold text-neutral-text flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-amber-600"></i> Tugas Rumah Aktif
+                    </h2>
+                    <span class="text-xs text-neutral-muted">Tenggat Waktu</span>
+                </div>
+
+                @if ($assignments->isNotEmpty())
+                    <div class="space-y-2.5">
+                        @foreach ($assignments as $task)
+                            <div class="p-3 rounded-xl border border-neutral-border bg-surface text-xs space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-neutral-text">{{ $task->title }}</span>
+                                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-subtle text-neutral-text border border-neutral-border">
+                                        Due: {{ $task->due_date?->format('d M, H:i') }}
+                                    </span>
+                                </div>
+                                <div class="text-[11px] text-neutral-muted line-clamp-1">
+                                    {{ $task->instructions }}
+                                </div>
+                                <div class="text-[10px] text-brand-primary font-semibold pt-1">
+                                    {{ $task->subject?->name }} &bull; Pengampu: {{ $task->teacher?->user?->name ?? 'Guru' }}
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-neutral-muted py-6 text-center">Tidak ada tugas rumah aktif saat ini.</p>
+                @endif
             </div>
         </div>
     </div>

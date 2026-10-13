@@ -17,6 +17,7 @@ class Tryout extends Model
      */
     protected $fillable = [
         'title',
+        'batch_name',
         'date_start',
         'date_end',
         'is_active',
@@ -37,10 +38,31 @@ class Tryout extends Model
     }
 
     /**
+     * Get the subtests for this tryout.
+     */
+    public function subtests(): HasMany
+    {
+        return $this->hasMany(TryoutSubtest::class);
+    }
+
+    /**
      * Get the scores recorded for this tryout.
      */
     public function tryoutScores(): HasMany
     {
         return $this->hasMany(TryoutScore::class, 'tryout_id');
+    }
+
+    /**
+     * Aliases for start_date and end_date.
+     */
+    public function getStartDateAttribute(): mixed
+    {
+        return $this->date_start;
+    }
+
+    public function getEndDateAttribute(): mixed
+    {
+        return $this->date_end;
     }
 }

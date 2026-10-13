@@ -34,7 +34,7 @@
             </div>
 
             <div>
-                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Manajemen Master Data</p>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Master Data</p>
                 <nav class="space-y-1">
                     <a href="{{ route('admin.jurusan.index') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.jurusan.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
@@ -46,10 +46,20 @@
                         <i class="fa-solid fa-school w-5 text-center mr-2.5 {{ request()->routeIs('admin.kelas.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
                         <span>Kelas / Rombel</span>
                     </a>
+                    <a href="{{ route('admin.mata-pelajaran.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.mata-pelajaran.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-book-bookmark w-5 text-center mr-2.5 {{ request()->routeIs('admin.mata-pelajaran.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Mata Pelajaran (Mapel)</span>
+                    </a>
                     <a href="{{ route('admin.guru.index') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.guru.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
                         <i class="fa-solid fa-chalkboard-user w-5 text-center mr-2.5 {{ request()->routeIs('admin.guru.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
                         <span>Guru &amp; Mentor</span>
+                    </a>
+                    <a href="{{ route('admin.orang-tua.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.orang-tua.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-hands-holding-child w-5 text-center mr-2.5 {{ request()->routeIs('admin.orang-tua.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Orang Tua / Wali</span>
                     </a>
                     <a href="{{ route('admin.siswa.index') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.siswa.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
@@ -60,13 +70,61 @@
             </div>
 
             <div>
-                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Evaluasi &amp; Komunikasi</p>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Operasional Akademik</p>
                 <nav class="space-y-1">
+                    <a href="{{ route('admin.jadwal.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.jadwal.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-calendar-days w-5 text-center mr-2.5 {{ request()->routeIs('admin.jadwal.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Jadwal Pelajaran</span>
+                    </a>
+                    <a href="{{ route('admin.tugas.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.tugas.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-book-open w-5 text-center mr-2.5 {{ request()->routeIs('admin.tugas.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Tugas Rumah (PR)</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Konten Pembelajaran</p>
+                <nav class="space-y-1">
+                    <a href="{{ route('admin.alter.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.alter.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-play-circle w-5 text-center mr-2.5 {{ request()->routeIs('admin.alter.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>ALTER LMS Video &amp; Soal</span>
+                    </a>
+                    <a href="{{ route('admin.english.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.english.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-language w-5 text-center mr-2.5 {{ request()->routeIs('admin.english.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>English Mastery Bank</span>
+                    </a>
                     <a href="{{ route('admin.tryout.index') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.tryout.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
                         <i class="fa-solid fa-file-pen w-5 text-center mr-2.5 {{ request()->routeIs('admin.tryout.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
-                        <span>Paket Tryout</span>
+                        <span>Paket Tryout &amp; Subtes</span>
                     </a>
+                </nav>
+            </div>
+
+            <div>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Layanan Konsultasi</p>
+                <nav class="space-y-1">
+                    <a href="{{ route('admin.konsultasi-mapel.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.konsultasi-mapel.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-comments w-5 text-center mr-2.5 {{ request()->routeIs('admin.konsultasi-mapel.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Tentoring Mapel Guru</span>
+                    </a>
+                    <a href="{{ route('admin.konseling-bk.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.konseling-bk.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-heart-pulse w-5 text-center mr-2.5 {{ request()->routeIs('admin.konseling-bk.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Konseling BK (Kak Nisa)</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Komunikasi &amp; Gateway</p>
+                <nav class="space-y-1">
                     <a href="{{ route('admin.whatsapp.index') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.whatsapp.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
                         <i class="fa-brands fa-whatsapp w-5 text-center mr-2.5 {{ request()->routeIs('admin.whatsapp.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tryouts', function (Blueprint $table) {
+        Schema::create('tryout_subtests', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 150);
-            $table->date('date_start');
-            $table->date('date_end');
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('tryout_id')->constrained('tryouts')->cascadeOnDelete();
+            $table->string('name', 100);
+            $table->unsignedInteger('question_count')->default(20);
+            $table->unsignedInteger('duration_minutes')->default(30);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tryouts');
+        Schema::dropIfExists('tryout_subtests');
     }
 };

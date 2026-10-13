@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
@@ -27,6 +28,7 @@ class Student extends Model
         'parent_phone_number',
         'status_active',
         'qr_identity_token',
+        'qr_code_token',
     ];
 
     /**
@@ -130,10 +132,44 @@ class Student extends Model
     }
 
     /**
-     * Get the tryout scores recorded for the student.
+     * Get the parents/guardians linked to this student.
      */
-    public function tryoutScores(): HasMany
+    public function parents(): BelongsToMany
     {
-        return $this->hasMany(TryoutScore::class, 'student_id');
+        return $this->belongsToMany(ParentGuardian::class, 'student_parent', 'student_id', 'parent_id')
+            ->withPivot('relationship_type')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get homework submissions by this student.
+     */
+    public function homeworkSubmissions(): HasMany
+    {
+        return $this->hasMany(HomeworkSubmission::class, 'student_id');
+    }
+
+    /**
+     * Get subject consultation (tentoring) bookings made by the student.
+     */
+    public function subjectConsultationBookings(): HasMany
+    {
+        return $this->hasMany(SubjectConsultationBooking::class, 'student_id');
+    }
+
+    /**
+     * Get counseling bookings (BK) made by or for the student.
+     */
+    public function counselingBookings(): HasMany
+    {
+        return $this->hasMany(CounselingBooking::class, 'student_id');
+    }
+
+    /**
+     * Accessor for qr_code_token.
+     */
+    public function getQrCodeTokenAttribute(?string $value): ?string
+    {
+        return $value ?: $this->attributes['qr_identity_token'] ?? null;
     }
 }

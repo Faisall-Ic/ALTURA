@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Teacher extends Model
@@ -19,6 +20,7 @@ class Teacher extends Model
     protected $fillable = [
         'user_id',
         'nip',
+        'phone_number',
         'specialization_subject',
     ];
 
@@ -31,11 +33,51 @@ class Teacher extends Model
     }
 
     /**
+     * Get the subjects taught by this teacher.
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'teacher_subject');
+    }
+
+    /**
+     * Get the classes taught by this teacher.
+     */
+    public function academicClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(AcademicClass::class, 'teacher_class', 'teacher_id', 'class_id');
+    }
+
+    /**
      * Get the mentee students assigned to this teacher/mentor.
      */
     public function mentees(): HasMany
     {
         return $this->hasMany(Student::class, 'mentor_id');
+    }
+
+    /**
+     * Get the lesson schedules for this teacher.
+     */
+    public function lessonSchedules(): HasMany
+    {
+        return $this->hasMany(LessonSchedule::class);
+    }
+
+    /**
+     * Get the homework assignments created by this teacher.
+     */
+    public function homeworkAssignments(): HasMany
+    {
+        return $this->hasMany(HomeworkAssignment::class);
+    }
+
+    /**
+     * Get the subject consultation (tentoring) slots opened by this teacher.
+     */
+    public function subjectConsultationSlots(): HasMany
+    {
+        return $this->hasMany(SubjectConsultationSlot::class);
     }
 
     /**

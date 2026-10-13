@@ -18,7 +18,9 @@ class AlterCourse extends Model
      */
     protected $fillable = [
         'title',
+        'subject_id',
         'major_id',
+        'description',
         'is_snbt_core',
     ];
 
@@ -32,6 +34,14 @@ class AlterCourse extends Model
         return [
             'is_snbt_core' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the subject associated with this course.
+     */
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
     }
 
     /**

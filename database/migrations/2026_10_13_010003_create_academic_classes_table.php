@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('major_id')->constrained('majors')->restrictOnDelete();
             $table->string('name', 100);
             $table->string('code', 20)->unique();
+            $table->unsignedTinyInteger('grade_level')->default(12);
+            $table->boolean('is_tka_active')->default(true);
             $table->timestamps();
         });
     }
