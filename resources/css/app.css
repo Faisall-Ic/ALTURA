@@ -1,9 +1,45 @@
 @import 'tailwindcss';
+@config "../../tailwind.config.js";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    --color-canvas: #F8FAFC;
+    --color-surface: #FFFFFF;
+
+    --color-brand-dark: #0F172A;
+    --color-brand-navy: #1E293B;
+    --color-brand-primary: #1E40AF;
+    --color-brand-active: #2563EB;
+    --color-brand-soft: #EFF6FF;
+
+    --color-amber-accent: #D97706;
+    --color-amber-accent-soft: #FEF3C7;
+    --color-amber-accent-text: #92400E;
+
+    --color-red-accent: #DC2626;
+    --color-red-accent-soft: #FEE2E2;
+    --color-red-accent-text: #991B1B;
+
+    --color-neutral-text: #0F172A;
+    --color-neutral-muted: #64748B;
+    --color-neutral-border: #E2E8F0;
+    --color-neutral-subtle: #F1F5F9;
+
+    --color-primary-bg: #F8FAFC;
+    --color-surface-card: #FFFFFF;
+    --color-brand-blue: #1E40AF;
+    --color-brand-blue-hover: #1E293B;
+    --color-brand-blue-light: #2563EB;
+    --color-brand-blue-soft: #EFF6FF;
+    --color-accent-gold: #D97706;
+    --color-accent-gold-soft: #FEF3C7;
+    --color-accent-gold-border: #F59E0B;
+    --color-accent-red: #DC2626;
+    --color-accent-red-soft: #FEE2E2;
+    --color-accent-red-border: #EF4444;
+    --color-neutral-dark: #0F172A;
 }
