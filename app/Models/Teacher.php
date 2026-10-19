@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Teacher extends Model
@@ -19,6 +20,7 @@ class Teacher extends Model
     protected $fillable = [
         'user_id',
         'nip',
+        'phone_number',
         'specialization_subject',
     ];
 
@@ -31,7 +33,31 @@ class Teacher extends Model
     }
 
     /**
-     * Get the mentee students assigned to this teacher/mentor.
+     * Get the subjects taught by this teacher.
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'teacher_subject');
+    }
+
+    /**
+     * Get the classes taught by this teacher.
+     */
+    public function academicClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(AcademicClass::class, 'teacher_class', 'teacher_id', 'class_id');
+    }
+
+    /**
+     * Alias for academicClasses.
+     */
+    public function classes(): BelongsToMany
+    {
+        return $this->academicClasses();
+    }
+
+    /**
+     * Get the mentee students assigned to this teacher/mentor (Dual-role: Pembimbing Akademik).
      */
     public function mentees(): HasMany
     {
@@ -39,7 +65,39 @@ class Teacher extends Model
     }
 
     /**
-     * Get the attendances scanned by this teacher.
+     * Alias for mentees.
+     */
+    public function students(): HasMany
+    {
+        return $this->mentees();
+    }
+
+    /**
+     * Get the lesson schedules for this teacher (Dual-role: Guru Mapel).
+     */
+    public function lessonSchedules(): HasMany
+    {
+        return $this->hasMany(LessonSchedule::class);
+    }
+
+    /**
+     * Get the subject consultation (tentoring) slots opened by this teacher.
+     */
+    public function subjectConsultationSlots(): HasMany
+    {
+        return $this->hasMany(SubjectConsultationSlot::class);
+    }
+
+    /**
+     * Get the monthly submission alerts triggered for this mentor's mentees.
+     */
+    public function monthlySubmissionAlerts(): HasMany
+    {
+        return $this->hasMany(MonthlySubmissionAlert::class, 'mentor_id');
+    }
+
+    /**
+     * Get the attendances scanned by this teacher (legacy).
      */
     public function scannedAttendances(): HasMany
     {

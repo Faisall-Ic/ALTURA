@@ -4,7 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\AcademicClass;
 use App\Models\Major;
+use App\Models\ParentGuardian;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -26,6 +28,16 @@ class UserSeeder extends Seeder
             ]
         );
         $admin->syncRoles(['admin']);
+
+        // 1b. Front Desk Admin (Kakak Administrasi - Rule 2)
+        $frontDesk = User::firstOrCreate(
+            ['email' => 'frontdesk@altura.test'],
+            [
+                'name' => 'Kakak Administrasi (Front Desk ALTO)',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $frontDesk->syncRoles(['admin', 'front_desk']);
 
         // 2. Counselor Kak Nisa (Guru BK)
         $counselor = User::firstOrCreate(
@@ -51,9 +63,16 @@ class UserSeeder extends Seeder
             ['user_id' => $teacherUser1->id],
             [
                 'nip' => '198501152010011002',
+                'phone_number' => '6281122334455',
                 'specialization_subject' => 'Matematika & Penalaran Kuantitatif',
             ]
         );
+
+        // Map teacher 1 to subjects & classes
+        $mathSubjects = Subject::whereIn('code', ['PM', 'PK', 'MAT-PEM'])->pluck('id');
+        $teacher1->subjects()->syncWithoutDetaching($mathSubjects);
+        $mathClasses = AcademicClass::whereIn('code', ['12-MIPA-01', '12-MIPA-02', 'SNBT-01'])->pluck('id');
+        $teacher1->academicClasses()->syncWithoutDetaching($mathClasses);
 
         // 4. Teacher 2 (Ibu Siti)
         $teacherUser2 = User::firstOrCreate(
@@ -65,13 +84,19 @@ class UserSeeder extends Seeder
         );
         $teacherUser2->syncRoles(['guru']);
 
-        Teacher::firstOrCreate(
+        $teacher2 = Teacher::firstOrCreate(
             ['user_id' => $teacherUser2->id],
             [
                 'nip' => '199002202015022003',
+                'phone_number' => '6281199887766',
                 'specialization_subject' => 'Bahasa Inggris & Literasi',
             ]
         );
+
+        $englishSubjects = Subject::whereIn('code', ['LBE'])->pluck('id');
+        $teacher2->subjects()->syncWithoutDetaching($englishSubjects);
+        $englishClasses = AcademicClass::whereIn('code', ['12-MIPA-01', '12-IPS-01'])->pluck('id');
+        $teacher2->academicClasses()->syncWithoutDetaching($englishClasses);
 
         // 5. Parent (Pak Bambang)
         $parentUser = User::firstOrCreate(
@@ -82,6 +107,15 @@ class UserSeeder extends Seeder
             ]
         );
         $parentUser->syncRoles(['orang_tua']);
+
+        $parentGuardian = ParentGuardian::firstOrCreate(
+            ['user_id' => $parentUser->id],
+            [
+                'phone_number' => '6281234567890',
+                'occupation' => 'Wiraswasta / Profesional',
+                'address' => 'Jl. Alumni Tutorial No. 45, Bandung',
+            ]
+        );
 
         // 6. Student (Ahmad Rizky Pratama)
         $mipaMajor = Major::where('code', 'MIPA')->first();
@@ -108,11 +142,43 @@ class UserSeeder extends Seeder
                 'parent_phone_number' => '6281234567890',
                 'status_active' => true,
                 'qr_identity_token' => 'ALTURA-STD-0067829101',
+                'qr_code_token' => 'ALTURA-STD-0067829101',
             ]
         );
 
         if (! $student->parent_user_id) {
             $student->update(['parent_user_id' => $parentUser->id]);
         }
+
+        // Map student to parent in student_parent pivot
+        $student->parents()->syncWithoutDetaching([
+            $parentGuardian->id => ['relationship_type' => 'Ayah'],
+        ]);
+
+        // 7. Student 2 with Nullable NISN (Rule 1: ALTO data can lack NISN)
+        $studentUser2 = User::firstOrCreate(
+            ['email' => 'dewi.siswa@altura.test'],
+            [
+                'name' => 'Dewi Lestari (NISN Belum Dilengkapi)',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $studentUser2->syncRoles(['siswa']);
+
+        Student::firstOrCreate(
+            ['user_id' => $studentUser2->id],
+            [
+                'nisn' => null, // Explicit null NISN
+                'major_id' => $mipaMajor->id,
+                'class_id' => $class12Mipa1->id,
+                'mentor_id' => $teacher1->id,
+                'counselor_id' => $counselor->id,
+                'parent_user_id' => null,
+                'parent_phone_number' => '6281987654321',
+                'status_active' => true,
+                'qr_identity_token' => 'ALTURA-STD-DEWINT99',
+                'qr_code_token' => 'ALTURA-STD-DEWINT99',
+            ]
+        );
     }
 }

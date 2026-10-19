@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Major extends Model
@@ -18,6 +19,7 @@ class Major extends Model
     protected $fillable = [
         'name',
         'code',
+        'description',
         'is_snbt_mandatory',
     ];
 
@@ -47,6 +49,14 @@ class Major extends Model
     public function students(): HasMany
     {
         return $this->hasMany(Student::class);
+    }
+
+    /**
+     * Get the subjects linked to this major.
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'major_subject');
     }
 
     /**

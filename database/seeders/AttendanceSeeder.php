@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Attendance;
+use App\Models\LessonSchedule;
 use App\Models\Student;
-use App\Models\Teacher;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -16,11 +17,15 @@ class AttendanceSeeder extends Seeder
     public function run(): void
     {
         $student = Student::first();
-        $teacher = Teacher::first();
+        // Front Desk Admin who scans students at the entrance (Rule 2)
+        $adminScanner = User::where('email', 'frontdesk@altura.test')->first()
+            ?: User::role('admin')->first();
 
-        if (! $student || ! $teacher) {
+        if (! $student || ! $adminScanner) {
             return;
         }
+
+        $schedule = LessonSchedule::where('class_id', $student->class_id)->first();
 
         $records = [
             ['days_ago' => 14, 'time' => '16:00:00', 'status' => 'hadir', 'remarks' => 'Sesi 1: Matrikulasi Aljabar'],
@@ -48,10 +53,12 @@ class AttendanceSeeder extends Seeder
             if (! $existing) {
                 Attendance::create([
                     'student_id' => $student->id,
+                    'lesson_schedule_id' => $schedule?->id,
                     'date' => $date,
+                    'time_in' => $item['time'],
                     'session_time' => $item['time'],
                     'status' => $item['status'],
-                    'scanned_by_teacher_id' => $teacher->id,
+                    'scanned_by_admin_id' => $adminScanner->id,
                     'remarks' => $item['remarks'],
                 ]);
             }

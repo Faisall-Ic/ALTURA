@@ -1,17 +1,17 @@
 <x-layouts.app>
     <x-slot:title>Edit Guru / Mentor</x-slot:title>
 
-    <div class="max-w-2xl mx-auto space-y-6">
+    <div class="max-w-3xl mx-auto space-y-6">
         <div>
             <a href="{{ route('admin.guru.index') }}" class="inline-flex items-center gap-1.5 text-xs text-brand-primary hover:text-brand-navy font-semibold mb-2 transition-colors">
                 <i class="fa-solid fa-arrow-left text-[11px]"></i> Kembali ke Daftar Guru
             </a>
-            <h1 class="text-2xl font-bold text-neutral-text">Edit Guru / Mentor: {{ $teacher->user?->name }}</h1>
-            <p class="text-xs text-neutral-muted mt-1">Perbarui data profil dan mata pelajaran instruktur.</p>
+            <h1 class="text-2xl font-bold text-neutral-text">Edit Guru & Mentor: {{ $teacher->user?->name }}</h1>
+            <p class="text-xs text-neutral-muted mt-1">Perbarui data profil, kontak, serta pemetaan mata pelajaran dan kelas yang diampu.</p>
         </div>
 
         <div class="bg-white border border-neutral-border rounded-2xl p-6 sm:p-8 shadow-xs">
-            <form action="{{ route('admin.guru.update', $teacher) }}" method="POST" class="space-y-5">
+            <form action="{{ route('admin.guru.update', $teacher) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -64,14 +64,69 @@
                     </div>
 
                     <div>
-                        <label for="specialization_subject" class="block text-xs font-semibold uppercase text-neutral-muted mb-2">
-                            Mata Pelajaran / Spesialisasi <span class="text-red-accent">*</span>
+                        <label for="phone_number" class="block text-xs font-semibold uppercase text-neutral-muted mb-2">
+                            Nomor WhatsApp / HP
                         </label>
-                        <input type="text" name="specialization_subject" id="specialization_subject" value="{{ old('specialization_subject', $teacher->specialization_subject) }}" required
+                        <input type="text" name="phone_number" id="phone_number" value="{{ old('phone_number', $teacher->phone_number) }}"
+                            placeholder="Contoh: 081234567890"
                             class="w-full px-4 py-2.5 rounded-xl bg-surface border border-neutral-border text-neutral-text placeholder-neutral-muted text-xs focus:outline-none focus:border-brand-primary">
-                        @error('specialization_subject')
+                        @error('phone_number')
                             <p class="text-xs text-red-accent mt-1">{{ $message }}</p>
                         @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <label for="specialization_subject" class="block text-xs font-semibold uppercase text-neutral-muted mb-2">
+                        Label Spesialisasi / Deskripsi Peran
+                    </label>
+                    <input type="text" name="specialization_subject" id="specialization_subject" value="{{ old('specialization_subject', $teacher->specialization_subject) }}"
+                        class="w-full px-4 py-2.5 rounded-xl bg-surface border border-neutral-border text-neutral-text placeholder-neutral-muted text-xs focus:outline-none focus:border-brand-primary">
+                </div>
+
+                <!-- Multi-Subject Mapping -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-xs font-semibold uppercase text-neutral-muted">
+                            Mata Pelajaran yang Diajar (Multi-Subject)
+                        </label>
+                        <span class="text-[11px] text-neutral-muted">Pilih satu atau lebih</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 p-3 rounded-xl border border-neutral-border bg-surface max-h-48 overflow-y-auto">
+                        @foreach ($subjects as $s)
+                            <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-subtle cursor-pointer transition-colors">
+                                <input type="checkbox" name="subject_ids[]" value="{{ $s->id }}"
+                                    {{ in_array($s->id, old('subject_ids', $selectedSubjectIds)) ? 'checked' : '' }}
+                                    class="w-4 h-4 rounded text-brand-primary focus:ring-brand-primary/50">
+                                <div class="text-xs truncate">
+                                    <span class="font-medium text-neutral-text">{{ $s->name }}</span>
+                                    <span class="text-[10px] text-neutral-muted block">({{ $s->code }}) &bull; {{ $s->is_tka ? 'TKA' : 'SNBT' }}</span>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Multi-Class Mapping -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-xs font-semibold uppercase text-neutral-muted">
+                            Penugasan Kelas (Multi-Class)
+                        </label>
+                        <span class="text-[11px] text-neutral-muted">Pilih rombel yang diampu</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 p-3 rounded-xl border border-neutral-border bg-surface max-h-48 overflow-y-auto">
+                        @foreach ($classes as $c)
+                            <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-subtle cursor-pointer transition-colors">
+                                <input type="checkbox" name="class_ids[]" value="{{ $c->id }}"
+                                    {{ in_array($c->id, old('class_ids', $selectedClassIds)) ? 'checked' : '' }}
+                                    class="w-4 h-4 rounded text-brand-primary focus:ring-brand-primary/50">
+                                <div class="text-xs truncate">
+                                    <span class="font-medium text-neutral-text">{{ $c->name }}</span>
+                                    <span class="text-[10px] text-neutral-muted block">{{ $c->major?->code }}</span>
+                                </div>
+                            </label>
+                        @endforeach
                     </div>
                 </div>
 
@@ -80,7 +135,7 @@
                         Batal
                     </a>
                     <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-brand-primary hover:bg-brand-navy shadow-xs transition-all">
-                        Perbarui Guru
+                        Perbarui Guru & Pemetaan
                     </button>
                 </div>
             </form>

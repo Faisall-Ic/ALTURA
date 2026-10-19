@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\StudentsImport;
 use App\Models\AcademicClass;
 use App\Models\Major;
 use App\Models\Student;
@@ -12,7 +13,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StudentController extends Controller
@@ -71,17 +74,17 @@ class StudentController extends Controller
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6'],
-            'nisn' => ['required', 'string', 'max:30', 'unique:students,nisn'],
+            'nisn' => ['nullable', 'string', 'max:30', 'unique:students,nisn'],
             'major_id' => ['required', 'exists:majors,id'],
             'class_id' => ['required', 'exists:academic_classes,id'],
             'mentor_id' => ['required', 'exists:teachers,id'],
             'counselor_id' => ['required', 'exists:users,id'],
-            'parent_phone_number' => ['required', 'string', 'max:25'],
+            'parent_phone_number' => ['nullable', 'string', 'max:25'],
             'status_active' => ['nullable', 'boolean'],
         ]);
 
         $statusActive = $request->boolean('status_active', true);
-        $qrToken = 'ALTURA-STD-'.strtoupper($validated['nisn']);
+        $qrToken = 'ALTURA-STD-'.(! empty($validated['nisn']) ? strtoupper($validated['nisn']) : Str::upper(Str::random(10)));
 
         DB::transaction(function () use ($validated, $statusActive, $qrToken) {
             $user = User::create([
@@ -102,6 +105,7 @@ class StudentController extends Controller
                 'parent_phone_number' => $validated['parent_phone_number'],
                 'status_active' => $statusActive,
                 'qr_identity_token' => $qrToken,
+                'qr_code_token' => $qrToken,
             ]);
         });
 
@@ -139,12 +143,12 @@ class StudentController extends Controller
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email,'.$siswa->user_id],
             'password' => ['nullable', 'string', 'min:6'],
-            'nisn' => ['required', 'string', 'max:30', 'unique:students,nisn,'.$siswa->id],
+            'nisn' => ['nullable', 'string', 'max:30', 'unique:students,nisn,'.$siswa->id],
             'major_id' => ['required', 'exists:majors,id'],
             'class_id' => ['required', 'exists:academic_classes,id'],
             'mentor_id' => ['required', 'exists:teachers,id'],
             'counselor_id' => ['required', 'exists:users,id'],
-            'parent_phone_number' => ['required', 'string', 'max:25'],
+            'parent_phone_number' => ['nullable', 'string', 'max:25'],
             'status_active' => ['nullable', 'boolean'],
         ]);
 
@@ -193,106 +197,22 @@ class StudentController extends Controller
     }
 
     /**
-     * Import students from an uploaded CSV file.
+     * Import students from an uploaded Excel / CSV file.
      */
     public function importExcel(Request $request): RedirectResponse
     {
         $request->validate([
-            'file' => ['required', 'file', 'mimes:csv,txt', 'max:5120'],
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv,txt', 'max:10240'],
         ]);
 
-        $file = $request->file('file');
-        $handle = fopen($file->getRealPath(), 'r');
+        try {
+            Excel::import(new StudentsImport, $request->file('file'));
 
-        if (! $handle) {
-            return back()->with('error', 'Gagal membaca berkas CSV.');
+            return redirect()->route('admin.siswa.index')
+                ->with('success', 'Data siswa berhasil diimpor dari file.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal memproses file impor: '.$e->getMessage());
         }
-
-        $header = fgetcsv($handle, 1000, ',');
-        if (! $header) {
-            fclose($handle);
-
-            return back()->with('error', 'Berkas CSV kosong atau tidak memiliki header.');
-        }
-
-        // Expected header format: nama,email,nisn,kode_jurusan,kode_kelas,nip_mentor,email_bk,no_hp_ortu,password
-        $importedCount = 0;
-        $failedCount = 0;
-
-        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
-            if (count($row) < 8) {
-                $failedCount++;
-
-                continue;
-            }
-
-            $name = trim($row[0]);
-            $email = trim($row[1]);
-            $nisn = trim($row[2]);
-            $majorCode = trim($row[3]);
-            $classCode = trim($row[4]);
-            $mentorNip = trim($row[5]);
-            $counselorEmail = trim($row[6]);
-            $parentPhone = trim($row[7]);
-            $password = ! empty($row[8]) ? trim($row[8]) : 'password';
-
-            if (empty($email) || empty($nisn)) {
-                $failedCount++;
-
-                continue;
-            }
-
-            // Check duplicates
-            if (User::where('email', $email)->exists() || Student::where('nisn', $nisn)->exists()) {
-                $failedCount++;
-
-                continue;
-            }
-
-            $major = Major::where('code', $majorCode)->first();
-            $class = AcademicClass::where('code', $classCode)->first();
-            $mentor = Teacher::where('nip', $mentorNip)->first();
-            $counselor = User::where('email', $counselorEmail)->first();
-
-            if (! $major || ! $class || ! $mentor || ! $counselor) {
-                $failedCount++;
-
-                continue;
-            }
-
-            try {
-                DB::transaction(function () use ($name, $email, $password, $nisn, $major, $class, $mentor, $counselor, $parentPhone) {
-                    $user = User::create([
-                        'name' => $name,
-                        'email' => $email,
-                        'password' => Hash::make($password),
-                    ]);
-
-                    $user->syncRoles(['siswa']);
-
-                    Student::create([
-                        'user_id' => $user->id,
-                        'nisn' => $nisn,
-                        'major_id' => $major->id,
-                        'class_id' => $class->id,
-                        'mentor_id' => $mentor->id,
-                        'counselor_id' => $counselor->id,
-                        'parent_phone_number' => $parentPhone,
-                        'status_active' => true,
-                        'qr_identity_token' => 'ALTURA-STD-'.strtoupper($nisn),
-                    ]);
-                });
-
-                $importedCount++;
-            } catch (\Throwable $e) {
-                $failedCount++;
-            }
-        }
-
-        fclose($handle);
-
-        return redirect()->route('admin.siswa.index')
-            ->with('success', "Proses impor selesai: {$importedCount} siswa berhasil ditambahkan, {$failedCount} baris dilewati/gagal.");
     }
 
     /**

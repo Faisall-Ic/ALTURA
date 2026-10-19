@@ -109,4 +109,54 @@ class EnglishVocabTest extends TestCase
             'passed' => false,
         ]);
     }
+
+    /**
+     * Test vocab quiz has zero multiple-choice elements and renders pure text inputs.
+     */
+    public function test_vocab_quiz_view_has_zero_multiple_choice_and_uses_text_input(): void
+    {
+        $response = $this->actingAs($this->studentUser)
+            ->get(route('siswa.english.vocab.take', 1));
+
+        $response->assertStatus(200);
+        $response->assertSee('Kuis CBT Kosakata (Essay)');
+        $response->assertSee('Input Teks Manual');
+        $response->assertSee('placeholder="Ketik terjemahan / padanan bahasa Inggris..."', false);
+        $response->assertDontSee('type="radio"', false);
+        $response->assertDontSee('Pilihan Ganda');
+    }
+
+    /**
+     * Test typed synonym evaluation with acceptable_answers, trimming, and case insensitivity.
+     */
+    public function test_student_can_pass_quiz_with_typed_synonyms_and_case_insensitive(): void
+    {
+        $words = VocabWord::byModule(1)->limit(5)->get();
+
+        $answers = [];
+        foreach ($words as $w) {
+            $acceptable = $w->acceptable_answers;
+            if (is_array($acceptable) && ! empty($acceptable)) {
+                // Submit uppercase with spaces around synonym
+                $answers[$w->id] = '   '.strtoupper($acceptable[0]).'   ';
+            } else {
+                $answers[$w->id] = '   '.strtoupper($w->english_word).'   ';
+            }
+        }
+
+        $response = $this->actingAs($this->studentUser)
+            ->post(route('siswa.english.vocab.submit', 1), [
+                'answers' => $answers,
+            ]);
+
+        $response->assertRedirect(route('siswa.english.vocab.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('vocab_quiz_results', [
+            'student_id' => $this->student->id,
+            'module_number' => 1,
+            'score' => 100.00,
+            'passed' => true,
+        ]);
+    }
 }

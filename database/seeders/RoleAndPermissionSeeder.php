@@ -19,6 +19,7 @@ class RoleAndPermissionSeeder extends Seeder
         // The 5 application roles
         $roles = [
             'admin',
+            'front_desk',
             'guru',
             'guru_bk',
             'siswa',

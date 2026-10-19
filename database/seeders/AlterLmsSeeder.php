@@ -6,6 +6,7 @@ use App\Models\AlterChapter;
 use App\Models\AlterCourse;
 use App\Models\AlterProblem;
 use App\Models\Major;
+use App\Models\Subject;
 use Illuminate\Database\Seeder;
 
 class AlterLmsSeeder extends Seeder
@@ -20,6 +21,9 @@ class AlterLmsSeeder extends Seeder
             return;
         }
 
+        $pmSubject = Subject::where('code', 'PM')->first();
+        $fisSubject = Subject::where('code', 'FIS')->first();
+
         // Course 1: Penalaran Kuantitatif SNBT
         $course1 = AlterCourse::firstOrCreate(
             [
@@ -27,6 +31,7 @@ class AlterLmsSeeder extends Seeder
                 'major_id' => $mipaMajor->id,
             ],
             [
+                'subject_id' => $pmSubject?->id,
                 'is_snbt_core' => true,
             ]
         );
@@ -104,6 +109,7 @@ class AlterLmsSeeder extends Seeder
                 'major_id' => $mipaMajor->id,
             ],
             [
+                'subject_id' => $fisSubject?->id,
                 'is_snbt_core' => false,
             ]
         );

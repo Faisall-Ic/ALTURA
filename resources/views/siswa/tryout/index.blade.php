@@ -42,6 +42,69 @@
             </div>
         </div>
 
+        <!-- Available CBT Tryouts Section -->
+        <div class="bg-white border border-neutral-border rounded-2xl p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-neutral-border">
+                <div>
+                    <h2 class="text-base font-bold text-neutral-text flex items-center gap-2">
+                        <i class="fa-solid fa-laptop-code text-brand-primary"></i>
+                        <span>Paket Tryout CBT Aktif</span>
+                    </h2>
+                    <p class="text-xs text-neutral-muted mt-0.5">Pilih paket simulasi UTBK-SNBT untuk mengerjakan ujian secara langsung.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+                @forelse ($availableTryouts as $available)
+                    <div class="rounded-xl border border-neutral-border p-5 bg-neutral-subtle/40 hover:border-brand-primary/40 transition-all flex flex-col justify-between space-y-4 shadow-2xs">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-soft text-brand-primary border border-brand-primary/20">
+                                    {{ $available->duration_minutes ?? 90 }} Menit
+                                </span>
+                                @if (in_array($available->id, $completedTryoutIds ?? []))
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        Sudah Dikerjakan
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                        Tersedia
+                                    </span>
+                                @endif
+                            </div>
+                            <h3 class="font-bold text-neutral-text text-sm leading-snug">{{ $available->title }}</h3>
+                            <p class="text-[11px] text-neutral-muted mt-1">
+                                Periode: {{ $available->date_start ? \Carbon\Carbon::parse($available->date_start)->format('d M') : 'Sekarang' }} s.d {{ $available->date_end ? \Carbon\Carbon::parse($available->date_end)->format('d M Y') : 'Selesai' }}
+                            </p>
+                        </div>
+
+                        <div>
+                            @if (in_array($available->id, $completedTryoutIds ?? []))
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('siswa.tryout.show', $available->id) }}" class="py-2 px-3 text-center bg-white hover:bg-neutral-subtle text-neutral-text text-xs font-bold rounded-xl border border-neutral-border shadow-2xs transition-all">
+                                        Lihat Hasil
+                                    </a>
+                                    <a href="{{ route('siswa.tryout.take', $available->id) }}" class="flex-1 py-2 px-3 text-center bg-brand-primary hover:bg-brand-navy text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-play text-[11px]"></i>
+                                        <span>Mulai Kerjakan Tryout</span>
+                                    </a>
+                                </div>
+                            @else
+                                <a href="{{ route('siswa.tryout.take', $available->id) }}" class="block w-full py-2.5 text-center bg-brand-primary hover:bg-brand-navy text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play text-[11px]"></i>
+                                    <span>Mulai Kerjakan Tryout</span>
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-full py-8 text-center text-neutral-muted text-xs">
+                        Belum ada paket tryout aktif saat ini.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
         <!-- Tryout Scores History -->
         <div class="bg-white border border-neutral-border/60 rounded-2xl p-6 shadow-sm">
             <h2 class="text-lg font-bold text-neutral-text mb-4">Riwayat Nilai Tryout SNBT</h2>

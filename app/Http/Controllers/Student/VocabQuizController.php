@@ -45,7 +45,7 @@ class VocabQuizController extends Controller
     }
 
     /**
-     * Take a 10-question CBT quiz for a specific module.
+     * Take a 10-question text input (essay) quiz for a specific module.
      */
     public function take(Request $request, int $module): View|RedirectResponse
     {
@@ -64,36 +64,11 @@ class VocabQuizController extends Controller
             return redirect()->route('siswa.english.vocab.index')->with('error', 'Belum ada bank kosakata untuk modul ini.');
         }
 
-        // Get pool of distractor meanings from other words
-        $allMeanings = VocabWord::where('module_number', $module)->pluck('indonesian_meaning')->toArray();
-
-        $quizQuestions = $words->map(function ($word) use ($allMeanings) {
-            $correct = $word->indonesian_meaning;
-
-            // Pick 3 distractors
-            $distractors = collect($allMeanings)
-                ->filter(fn ($m) => $m !== $correct)
-                ->shuffle()
-                ->take(3)
-                ->values()
-                ->toArray();
-
-            $options = array_merge([$correct], $distractors);
-            shuffle($options);
-
-            return [
-                'id' => $word->id,
-                'english_word' => $word->english_word,
-                'example_sentence' => $word->example_sentence,
-                'options' => $options,
-            ];
-        });
-
-        return view('siswa.english.quiz-take', compact('student', 'module', 'quizQuestions'));
+        return view('siswa.english.vocab-essay', compact('student', 'module', 'words'));
     }
 
     /**
-     * Submit and auto-grade the CBT quiz.
+     * Submit and auto-grade the typed text input (essay) quiz.
      */
     public function submit(Request $request, int $module): RedirectResponse
     {
@@ -112,9 +87,31 @@ class VocabQuizController extends Controller
         $correctCount = 0;
         $totalCount = count($answers);
 
-        foreach ($answers as $wordId => $selectedMeaning) {
+        foreach ($answers as $wordId => $studentInput) {
             $word = $words->get($wordId);
-            if ($word && trim($word->indonesian_meaning) === trim($selectedMeaning)) {
+            if (! $word) {
+                continue;
+            }
+
+            // Convert typed input to lowercase & trim whitespace
+            $typed = trim(strtolower((string) $studentInput));
+
+            // Parse acceptable_answers JSON array from vocab_words table
+            $acceptableAnswers = $word->acceptable_answers;
+            if (is_string($acceptableAnswers)) {
+                $decoded = json_decode($acceptableAnswers, true);
+                $acceptableAnswers = is_array($decoded) ? $decoded : [];
+            } elseif (! is_array($acceptableAnswers)) {
+                $acceptableAnswers = [];
+            }
+
+            $acceptableList = array_map(fn ($val) => trim(strtolower((string) $val)), $acceptableAnswers);
+
+            $targetEnglish = trim(strtolower((string) $word->english_word));
+            $targetIndo = trim(strtolower((string) $word->indonesian_meaning));
+
+            // If $typed matches ANY item in acceptable_answers OR matches english_word / indonesian_meaning, mark as CORRECT
+            if ($typed !== '' && ($typed === $targetEnglish || $typed === $targetIndo || in_array($typed, $acceptableList, true))) {
                 $correctCount++;
             }
         }

@@ -16,6 +16,7 @@ class WaMessageLog extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'phone_number',
         'parent_phone_number',
         'message_payload',
         'trigger_event',
@@ -34,6 +35,14 @@ class WaMessageLog extends Model
         return [
             'sent_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Accessor for phone_number.
+     */
+    public function getPhoneNumberAttribute(?string $val): ?string
+    {
+        return $val ?: ($this->attributes['parent_phone_number'] ?? null);
     }
 
     /**

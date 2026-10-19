@@ -17,13 +17,32 @@ class CurriculumController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $student = $user->student;
+        $student = $user->student()->with(['academicClass', 'major'])->first();
 
-        $courses = AlterCourse::where('major_id', $student->major_id)
-            ->orWhere('is_snbt_core', true)
-            ->with(['chapters.problems'])
-            ->get();
+        $isTkaActive = $student?->academicClass?->is_tka_active ?? true;
 
-        return view('siswa.alter.kurikulum', compact('student', 'courses'));
+        $coursesQuery = AlterCourse::with(['subject', 'chapters.problems'])
+            ->where(function ($q) use ($student) {
+                if ($student) {
+                    $q->where('major_id', $student->major_id)
+                        ->orWhere('is_snbt_core', true);
+                } else {
+                    $q->where('is_snbt_core', true);
+                }
+            });
+
+        // Business Rule: When is_tka_active = false for Grade 12 classes, hide TKA subjects
+        if (! $isTkaActive) {
+            $coursesQuery->where(function ($q) {
+                $q->where('is_snbt_core', true)
+                    ->orWhereHas('subject', function ($sq) {
+                        $sq->where('is_tka', false);
+                    });
+            });
+        }
+
+        $courses = $coursesQuery->get();
+
+        return view('siswa.alter.kurikulum', compact('student', 'courses', 'isTkaActive'));
     }
 }
