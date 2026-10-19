@@ -44,6 +44,22 @@ class Student extends Model
     }
 
     /**
+     * Check if student profile is complete (Rule 1: NISN present).
+     */
+    public function isProfileComplete(): bool
+    {
+        return ! empty($this->nisn);
+    }
+
+    /**
+     * Check if student needs profile completion prompt (Rule 1).
+     */
+    public function needsProfileCompletion(): bool
+    {
+        return empty($this->nisn);
+    }
+
+    /**
      * Get the user account associated with the student.
      */
     public function user(): BelongsTo
@@ -84,19 +100,29 @@ class Student extends Model
     }
 
     /**
+     * Get the registered parent (user account) for the student.
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'parent_user_id');
+    }
+
+    /**
+     * Get the parents/guardians linked to this student via student_parent pivot.
+     */
+    public function parents(): BelongsToMany
+    {
+        return $this->belongsToMany(ParentGuardian::class, 'student_parent', 'student_id', 'parent_id')
+            ->withPivot('relationship_type')
+            ->withTimestamps();
+    }
+
+    /**
      * Get the attendance records for the student.
      */
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
-    }
-
-    /**
-     * Get the consultation bookings made by the student.
-     */
-    public function consultationBookings(): HasMany
-    {
-        return $this->hasMany(ConsultationBooking::class, 'student_id');
     }
 
     /**
@@ -108,45 +134,27 @@ class Student extends Model
     }
 
     /**
+     * Get storytelling submissions for this student.
+     */
+    public function storytellingSubmissions(): HasMany
+    {
+        return $this->hasMany(StorytellingSubmission::class, 'student_id');
+    }
+
+    /**
+     * Get wacana submissions for this student.
+     */
+    public function wacanaSubmissions(): HasMany
+    {
+        return $this->hasMany(WacanaSubmission::class, 'student_id');
+    }
+
+    /**
      * Get the speaking exam bookings made by the student.
      */
     public function speakingBookings(): HasMany
     {
         return $this->hasMany(SpeakingBooking::class, 'student_id');
-    }
-
-    /**
-     * Get the registered parent (user account) for the student.
-     */
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'parent_user_id');
-    }
-
-    /**
-     * Get the automated attendance flags for the student.
-     */
-    public function attendanceFlags(): HasMany
-    {
-        return $this->hasMany(AttendanceFlag::class, 'student_id');
-    }
-
-    /**
-     * Get the parents/guardians linked to this student.
-     */
-    public function parents(): BelongsToMany
-    {
-        return $this->belongsToMany(ParentGuardian::class, 'student_parent', 'student_id', 'parent_id')
-            ->withPivot('relationship_type')
-            ->withTimestamps();
-    }
-
-    /**
-     * Get homework submissions by this student.
-     */
-    public function homeworkSubmissions(): HasMany
-    {
-        return $this->hasMany(HomeworkSubmission::class, 'student_id');
     }
 
     /**
@@ -163,6 +171,46 @@ class Student extends Model
     public function counselingBookings(): HasMany
     {
         return $this->hasMany(CounselingBooking::class, 'student_id');
+    }
+
+    /**
+     * Get tryout attempts by this student.
+     */
+    public function tryoutAttempts(): HasMany
+    {
+        return $this->hasMany(TryoutAttempt::class, 'student_id');
+    }
+
+    /**
+     * Get tryout scores for this student.
+     */
+    public function tryoutScores(): HasMany
+    {
+        return $this->hasMany(TryoutScore::class, 'student_id');
+    }
+
+    /**
+     * Get monthly submission alerts for this student.
+     */
+    public function monthlySubmissionAlerts(): HasMany
+    {
+        return $this->hasMany(MonthlySubmissionAlert::class, 'student_id');
+    }
+
+    /**
+     * Get the automated attendance flags for the student.
+     */
+    public function attendanceFlags(): HasMany
+    {
+        return $this->hasMany(AttendanceFlag::class, 'student_id');
+    }
+
+    /**
+     * Get the legacy consultation bookings made by the student.
+     */
+    public function consultationBookings(): HasMany
+    {
+        return $this->hasMany(ConsultationBooking::class, 'student_id');
     }
 
     /**

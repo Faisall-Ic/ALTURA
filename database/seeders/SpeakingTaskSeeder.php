@@ -5,10 +5,12 @@ namespace Database\Seeders;
 use App\Models\SpeakingAssessment;
 use App\Models\SpeakingBooking;
 use App\Models\SpeakingTask;
-use App\Models\StorytellingScript;
+use App\Models\StorytellingSubmission;
+use App\Models\StorytellingTheme;
 use App\Models\Student;
 use App\Models\Teacher;
-use App\Models\WacanaScript;
+use App\Models\WacanaSubmission;
+use App\Models\WacanaText;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -19,96 +21,116 @@ class SpeakingTaskSeeder extends Seeder
      */
     public function run(): void
     {
-        $task1 = SpeakingTask::firstOrCreate(
+        // 1. Storytelling Themes (Rule 5: ALTO assigns monthly themes rather than fixed scripts)
+        $themeOct = StorytellingTheme::firstOrCreate(
             [
-                'title' => 'Storytelling: The Legend of Rawa Pening',
+                'month' => 10,
+                'year' => 2026,
             ],
+            [
+                'theme_name' => 'Technological Breakthroughs and Society',
+                'description' => 'Describe a major historical or futuristic scientific invention and its ethical, social, and economic impacts on human civilization.',
+            ]
+        );
+
+        $themeNov = StorytellingTheme::firstOrCreate(
+            [
+                'month' => 11,
+                'year' => 2026,
+            ],
+            [
+                'theme_name' => 'Overcoming Adversity & Building Resilience',
+                'description' => 'Share a narrative about a community, leader, or personal figure who persevered against severe odds to bring positive change.',
+            ]
+        );
+
+        StorytellingTheme::firstOrCreate(
+            [
+                'month' => 12,
+                'year' => 2026,
+            ],
+            [
+                'theme_name' => 'Environmental Stewardship & Global Sustainability',
+                'description' => 'Explore the balance between economic development and ecological preservation through a compelling real or fictional story.',
+            ]
+        );
+
+        // 2. Wacana Texts (Rule 5 & Table 18)
+        $wacana1 = WacanaText::firstOrCreate(
+            ['title' => 'Artificial Intelligence in Secondary and Higher Education'],
+            [
+                'content' => "The exponential proliferation of generative artificial intelligence is fundamentally transforming the landscape of secondary education. Rather than viewing machine learning models merely as potential cheating instruments, innovative educators must embrace them as dynamic cognitive scaffolds.\n\nFirst and foremost, AI empowers hyper-personalized learning pathways. Traditional classrooms often adhere to a standardized pace, inevitably leaving slower students behind while constraining accelerated learners. Adaptive AI tutors can instantly diagnose foundational mathematical gaps or vocabulary deficiencies, serving customized drills tailored to each student's unique cognitive cadence.\n\nSecondly, AI tools liberate teachers from time-consuming administrative grading, allowing them to redirect their finite energy toward mentorship, character development, and high-order critical reasoning seminars. However, this pedagogical revolution must be accompanied by ethical guardrails. Students must be rigorously trained in prompt engineering, source verification, and intellectual honesty. Ultimately, artificial intelligence should not replace human curiosity, but rather amplify our pursuit of profound scholastic excellence.",
+                'paragraph_count' => 3,
+            ]
+        );
+
+        $wacana2 = WacanaText::firstOrCreate(
+            ['title' => 'Sustainable Energy Transition in Developing Economies'],
+            [
+                'content' => "Developing nations face a paradoxical dilemma: accelerating rapid economic industrialization while simultaneously honoring ambitious international carbon emission reduction treaties. The conventional assumption that economic prosperity necessitates fossil fuel combustion is increasingly invalidated by recent breakthroughs in renewable infrastructure.\n\nSolar photovoltaic and onshore wind power have achieved grid parity in numerous emerging markets, drastically reducing capital expenditure requirements. Decentralized micro-grids empower isolated rural communities without requiring multi-billion-dollar transmission grid expansions, simultaneously fostering localized commercial resilience and gender empowerment.\n\nNevertheless, the intermittent nature of renewable sources demands strategic grid modernization, advanced battery energy storage systems, and comprehensive policy de-risking. Multilateral financial institutions must provide concessional climate financing to mitigate initial foreign exchange exposure. With deliberate technological leapfrogging, developing economies can achieve both robust sovereign energy security and planetary sustainability.",
+                'paragraph_count' => 3,
+            ]
+        );
+
+        // 3. Legacy SpeakingTask (for backwards compatibility with existing views)
+        $task1 = SpeakingTask::firstOrCreate(
+            ['title' => 'Storytelling: The Legend of Rawa Pening'],
             [
                 'type' => 'storytelling',
                 'minimum_pass_grade' => 75.00,
-                'script_text' => "Once upon a time in Central Java, there lived a poor boy named Baru Klinthing. He was cursed to look wounded and smelly, which caused greedy villagers to shun and mock him. Hungry and tired, he walked through the village festival asking for food, but everyone turned him away except a kind, elderly widow named Mbok Rondo.\n\nMbok Rondo gave him warm rice and welcomed him with genuine warmth. Before leaving, Baru Klinthing advised her: 'Mother, if you hear a roaring sound tonight, climb into your rice mortar (lesung) and take this wooden paddle.'\n\nReturning to the village square, Baru Klinthing stuck a small wooden stick into the ground and challenged the proud villagers to pull it out. One by one, the strongest men tried, but none could budge the stick. Finally, Baru Klinthing pulled it out with ease. From the hole in the ground, water gushed out endlessly, drowning the arrogant villagers and transforming the valley into a vast lake known today as Rawa Pening. Only kind Mbok Rondo survived, teaching us that humility and empathy are greater than vanity.",
+                'script_text' => 'Once upon a time in Central Java, there lived a poor boy named Baru Klinthing...',
             ]
         );
 
         $task2 = SpeakingTask::firstOrCreate(
-            [
-                'title' => 'Storytelling: The Legend of Tangkuban Perahu',
-            ],
-            [
-                'type' => 'storytelling',
-                'minimum_pass_grade' => 75.00,
-                'script_text' => "Long ago in West Java, Dayang Sumbi was a beautiful woman endowed with eternal youth. Her son, Sangkuriang, loved hunting in the deep forest accompanied by his loyal dog, Tumang. Unbeknownst to Sangkuriang, Tumang was actually his bewitched father.\n\nAfter a disappointing hunt, Sangkuriang made a tragic mistake that enraged Dayang Sumbi, causing her to banish him from their home. Years later, Sangkuriang wandered back as a strong warrior and unknowingly fell in love with Dayang Sumbi. Recognizing a scar on his head, she realized he was her son and sought an impossible task to prevent their marriage: Sangkuriang had to dam the Citarum river and build a gigantic wooden boat before sunrise.\n\nCalling upon mystical forest spirits, Sangkuriang almost finished the task. Panicking, Dayang Sumbi spread red silk cloths across the east to simulate dawn, tricking roosters into crowing. Furious at the deception, Sangkuriang kicked the giant boat upside down, which solidified into Mount Tangkuban Perahu, a reminder of the consequences of unbridled passion and destiny.",
-            ]
-        );
-
-        SpeakingTask::firstOrCreate(
-            [
-                'title' => 'Wacana Akademik: Artificial Intelligence in High School Education',
-            ],
+            ['title' => 'Wacana Akademik: Artificial Intelligence in High School Education'],
             [
                 'type' => 'wacana',
                 'minimum_pass_grade' => 75.00,
-                'script_text' => "The exponential proliferation of generative artificial intelligence is fundamentally transforming the landscape of secondary education. Rather than viewing machine learning models merely as potential cheating instruments, innovative educators must embrace them as dynamic cognitive scaffolds.\n\nFirst and foremost, AI empowers hyper-personalized learning pathways. Traditional classrooms often adhere to a standardized pace, inevitably leaving slower students behind while constraining accelerated learners. Adaptive AI tutors can instantly diagnose foundational mathematical gaps or vocabulary deficiencies, serving customized drills tailored to each student's unique cognitive cadence.\n\nSecondly, AI tools liberate teachers from time-consuming administrative grading, allowing them to redirect their finite energy toward mentorship, character development, and high-order critical reasoning seminars. However, this pedagogical revolution must be accompanied by ethical guardrails. Students must be rigorously trained in prompt engineering, source verification, and intellectual honesty. Ultimately, artificial intelligence should not replace human curiosity, but rather amplify our pursuit of profound scholastic excellence.",
+                'script_text' => 'The exponential proliferation of generative artificial intelligence is fundamentally transforming the landscape of secondary education.',
             ]
         );
 
-        SpeakingTask::firstOrCreate(
-            [
-                'title' => 'Wacana Akademik: Sustainable Energy Transition in Developing Economies',
-            ],
-            [
-                'type' => 'wacana',
-                'minimum_pass_grade' => 75.00,
-                'script_text' => "Transitioning toward sustainable renewable energy represents one of the most pressing socio-economic imperatives of the twenty-first century, especially across emerging Southeast Asian economies. While industrialized Western nations possess the capital reserves to retire fossil fuel infrastructure rapidly, developing countries face the delicate dual mandate of curbing carbon emissions while simultaneously expanding affordable electrification for industrial growth.\n\nDecarbonization strategies must capitalize on indigenous geographical endowments. In the Indonesian archipelago, geothermal volcanic reservoirs and year-round equatorial solar irradiance present immense clean baseload potential. Furthermore, decentralized micro-grid architectures can bypass the exorbitant capital expenditures required for centralized transmission across thousands of islands.\n\nTo finance this green transition without exacerbating public sovereign debt, transparent international climate partnerships and blended green bonds must be mobilized. By coupling technological innovation with prudent fiscal incentives, emerging nations can achieve economic prosperity without compromising the ecological health of future generations.",
-            ]
-        );
-
-        // Seed StorytellingScript & WacanaScript tables
-        StorytellingScript::firstOrCreate(
-            ['title' => 'The Legend of Rawa Pening'],
-            [
-                'script_text' => $task1->script_text,
-                'target_duration_minutes' => 3,
-            ]
-        );
-        StorytellingScript::firstOrCreate(
-            ['title' => 'The Legend of Tangkuban Perahu'],
-            [
-                'script_text' => $task2->script_text,
-                'target_duration_minutes' => 4,
-            ]
-        );
-
-        WacanaScript::firstOrCreate(
-            ['title' => 'Artificial Intelligence in High School Education'],
-            [
-                'script_text' => 'The exponential proliferation of generative artificial intelligence is fundamentally transforming the landscape of secondary education...',
-                'paragraph_count' => 3,
-            ]
-        );
-        WacanaScript::firstOrCreate(
-            ['title' => 'Sustainable Energy Transition in Developing Economies'],
-            [
-                'script_text' => 'Transitioning toward sustainable renewable energy represents one of the most pressing socio-economic imperatives of the twenty-first century...',
-                'paragraph_count' => 3,
-            ]
-        );
-
-        // Seed 1 completed booking & 1 upcoming booking for test student
+        // 4. Student submissions & bookings
         $student = Student::first();
         $teacher = Teacher::first();
 
         if ($student && $teacher) {
-            // Completed oral exam
+            // Storytelling Submission
+            StorytellingSubmission::firstOrCreate(
+                [
+                    'student_id' => $student->id,
+                    'theme_id' => $themeOct->id,
+                ],
+                [
+                    'title' => 'The Spark of Innovation: How Alan Turing Shaped Computing',
+                    'script_text' => 'Alan Mathison Turing was an English mathematician, computer scientist, logician, cryptanalyst, philosopher, and theoretical biologist. He played a pivotal role in cracking intercepted coded messages during World War II.',
+                    'notes' => 'Presentation prepared for October Monthly Theme. Script outline attached.',
+                    'status' => 'approved',
+                ]
+            );
+
+            // Wacana Submission
+            WacanaSubmission::firstOrCreate(
+                [
+                    'student_id' => $student->id,
+                    'wacana_id' => $wacana1->id,
+                ],
+                [
+                    'status' => 'submitted',
+                ]
+            );
+
+            // Completed oral exam booking
             $completedBooking = SpeakingBooking::firstOrCreate(
                 [
                     'student_id' => $student->id,
-                    'speaking_task_id' => $task1->id,
                     'booking_date' => Carbon::now()->subDays(5)->toDateString(),
                 ],
                 [
                     'mentor_id' => $student->mentor_id,
                     'task_type' => 'storytelling',
+                    'speaking_task_id' => $task1->id,
                     'time_slot' => '15:30 - 16:00',
                     'status' => 'completed',
                     'grade' => 88.00,
@@ -121,7 +143,7 @@ class SpeakingTaskSeeder extends Seeder
                 ]
             );
 
-            // Create assessment record
+            // Create assessment record (Table 19)
             SpeakingAssessment::firstOrCreate(
                 ['booking_id' => $completedBooking->id],
                 [
@@ -140,12 +162,12 @@ class SpeakingTaskSeeder extends Seeder
             SpeakingBooking::firstOrCreate(
                 [
                     'student_id' => $student->id,
-                    'speaking_task_id' => $task2->id,
                     'booking_date' => Carbon::now()->addDays(3)->toDateString(),
                 ],
                 [
                     'mentor_id' => $student->mentor_id,
                     'task_type' => 'storytelling',
+                    'speaking_task_id' => $task1->id,
                     'time_slot' => '16:00 - 16:30',
                     'status' => 'pending',
                 ]

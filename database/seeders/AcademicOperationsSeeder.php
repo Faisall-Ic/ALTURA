@@ -3,13 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\AcademicClass;
-use App\Models\HomeworkAssignment;
-use App\Models\HomeworkSubmission;
 use App\Models\LessonSchedule;
+use App\Models\MonthlySubmissionAlert;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class AcademicOperationsSeeder extends Seeder
@@ -31,8 +29,8 @@ class AcademicOperationsSeeder extends Seeder
             return;
         }
 
-        // 1. Lesson Schedules
-        $schedule1 = LessonSchedule::firstOrCreate(
+        // 1. Lesson Schedules (Rule 10: Dynamic Syllabus & Lesson Schedules)
+        LessonSchedule::firstOrCreate(
             [
                 'class_id' => $class->id,
                 'subject_id' => $pmSubject->id,
@@ -76,41 +74,31 @@ class AcademicOperationsSeeder extends Seeder
                     'teacher_id' => $teacher1->id,
                     'room' => 'Ruang Teori 12-A',
                     'time_end' => '14:40:00',
-                    'note' => 'Fisika Dinamika Partikel & Gerak Lurus',
+                    'note' => 'Fisika Dinamika Partikel & Gerak Lurus (TKA)',
                 ]
             );
         }
 
-        // 2. Homework Assignments
-        $hw1 = HomeworkAssignment::firstOrCreate(
-            [
-                'subject_id' => $pmSubject->id,
-                'class_id' => $class->id,
-                'title' => 'Latihan Mandiri: 15 Soal Penalaran Matematika Persamaan Kuadrat',
-            ],
-            [
-                'teacher_id' => $teacher1->id,
-                'instructions' => 'Kerjakan pada buku catatan latihan, lalu foto lembar jawaban dan unggah file PDF/JPG Anda sebelum batas tenggat.',
-                'due_date' => Carbon::now()->addDays(5)->setHour(23)->setMinute(59)->setSecond(0),
-            ]
-        );
-
-        // 3. Homework Submission for student
-        $student = Student::first();
-        if ($student) {
-            HomeworkSubmission::firstOrCreate(
-                [
-                    'assignment_id' => $hw1->id,
-                    'student_id' => $student->id,
-                ],
-                [
-                    'submission_file_path' => 'submissions/tugas_pm_ahmad_rizky.pdf',
-                    'student_note' => 'Sudah selesai pak, nomor 14 menggunakan cara cepat diskriminan.',
-                    'grade' => 92.00,
-                    'feedback' => 'Sangat rapi dan metode pembuktian langkah nomor 14 tepat sekali.',
-                    'submitted_at' => Carbon::now()->subDays(1),
-                ]
-            );
+        // 2. Tanggal 20 Auto-Alert System (Rule 3: monthly_submission_alerts)
+        $students = Student::all();
+        foreach ($students as $std) {
+            if ($std->mentor_id) {
+                // If student has incomplete tasks (e.g. Student 2 has missing submissions)
+                if ($std->needsProfileCompletion() || $std->id > 1) {
+                    MonthlySubmissionAlert::firstOrCreate(
+                        [
+                            'student_id' => $std->id,
+                            'month' => 10,
+                            'year' => 2026,
+                        ],
+                        [
+                            'mentor_id' => $std->mentor_id,
+                            'missing_tasks' => ['Vocab Quiz Modul 2', 'Storytelling Theme Oktober', 'ALTER Chapter 3'],
+                            'is_resolved' => false,
+                        ]
+                    );
+                }
+            }
         }
     }
 }

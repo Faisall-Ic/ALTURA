@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('subtest_indo', 6, 2)->default(0.00);
             $table->decimal('subtest_inggris', 6, 2)->default(0.00);
             $table->decimal('subtest_matematika', 6, 2)->default(0.00);
+            $table->json('subtest_scores')->nullable();
             $table->decimal('average_score', 6, 2)->default(0.00);
             $table->timestamps();
 

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
             $table->foreignId('teacher_id')->constrained('teachers')->cascadeOnDelete();
+            $table->foreignId('created_by_admin_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('topic', 150);
             $table->dateTime('date_time');
             $table->string('room_or_link')->default('Ruang Tentoring Alto');

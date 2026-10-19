@@ -17,7 +17,7 @@ class TryoutController extends Controller
     public function index(Request $request): View
     {
         $tryouts = Tryout::with(['subtests'])
-            ->withCount('tryoutScores')
+            ->withCount(['tryoutScores', 'questions'])
             ->latest('date_start')
             ->paginate(10);
 

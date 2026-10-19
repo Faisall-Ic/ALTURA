@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('module_number');
             $table->string('english_word', 100);
             $table->string('indonesian_meaning', 150);
+            $table->json('acceptable_answers')->nullable();
             $table->text('example_sentence')->nullable();
             $table->timestamps();
 

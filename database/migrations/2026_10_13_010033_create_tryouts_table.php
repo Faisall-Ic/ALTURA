@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('tryouts', function (Blueprint $table) {
             $table->id();
             $table->string('title', 150);
+            $table->unsignedInteger('duration_minutes')->default(120);
             $table->string('batch_name', 100)->nullable();
             $table->date('date_start');
             $table->date('date_end');
+            $table->boolean('is_published')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

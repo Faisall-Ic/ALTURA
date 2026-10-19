@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Models\HomeworkAssignment;
 use App\Models\LessonSchedule;
 use App\Models\Subject;
 use App\Models\User;
@@ -47,12 +46,7 @@ class DashboardController extends Controller
             }
 
             $schedules = $scheduleQuery->get();
-
-            $assignments = HomeworkAssignment::where('class_id', $student->class_id)
-                ->with(['subject', 'teacher.user'])
-                ->latest('due_date')
-                ->take(5)
-                ->get();
+            $assignments = collect(); // PR completely removed
 
             // Subjects list for this class/major
             $subjectQuery = Subject::where(function ($q) use ($student) {

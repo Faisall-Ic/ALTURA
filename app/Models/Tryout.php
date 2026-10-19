@@ -17,9 +17,11 @@ class Tryout extends Model
      */
     protected $fillable = [
         'title',
+        'duration_minutes',
         'batch_name',
         'date_start',
         'date_end',
+        'is_published',
         'is_active',
     ];
 
@@ -31,10 +33,28 @@ class Tryout extends Model
     protected function casts(): array
     {
         return [
+            'duration_minutes' => 'integer',
             'date_start' => 'date',
             'date_end' => 'date',
+            'is_published' => 'boolean',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the CBT questions for this tryout package.
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(TryoutQuestion::class);
+    }
+
+    /**
+     * Get student attempts on this tryout.
+     */
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(TryoutAttempt::class);
     }
 
     /**
@@ -48,9 +68,17 @@ class Tryout extends Model
     /**
      * Get the scores recorded for this tryout.
      */
-    public function tryoutScores(): HasMany
+    public function scores(): HasMany
     {
         return $this->hasMany(TryoutScore::class, 'tryout_id');
+    }
+
+    /**
+     * Backward compatibility alias for scores relation.
+     */
+    public function tryoutScores(): HasMany
+    {
+        return $this->scores();
     }
 
     /**

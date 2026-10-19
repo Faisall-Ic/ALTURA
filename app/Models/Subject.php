@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,6 +12,11 @@ class Subject extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'name',
         'code',
@@ -18,9 +24,33 @@ class Subject extends Model
         'description',
     ];
 
-    protected $casts = [
-        'is_tka' => 'boolean',
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_tka' => 'boolean',
+        ];
+    }
+
+    /**
+     * Scope to TKA subjects (Fisika, Kimia, Biologi, Sosiologi, etc.).
+     */
+    public function scopeTka(Builder $query): Builder
+    {
+        return $query->where('is_tka', true);
+    }
+
+    /**
+     * Scope to SNBT subjects (TPS, Literasi, Penalaran Matematika).
+     */
+    public function scopeSnbt(Builder $query): Builder
+    {
+        return $query->where('is_tka', false);
+    }
 
     /**
      * Majors that include this subject.
@@ -52,14 +82,6 @@ class Subject extends Model
     public function alterCourses(): HasMany
     {
         return $this->hasMany(AlterCourse::class);
-    }
-
-    /**
-     * Homework assignments for this subject.
-     */
-    public function homeworkAssignments(): HasMany
-    {
-        return $this->hasMany(HomeworkAssignment::class);
     }
 
     /**

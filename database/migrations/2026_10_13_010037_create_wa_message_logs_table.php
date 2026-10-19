@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('wa_message_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('parent_phone_number', 25);
+            $table->string('phone_number', 25)->nullable();
+            $table->string('parent_phone_number', 25)->nullable();
             $table->text('message_payload');
             $table->string('trigger_event', 50);
             $table->enum('status', ['sent', 'failed', 'queued'])->default('queued');

@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
-            $table->string('nisn', 30)->unique();
+            $table->string('nisn', 30)->nullable()->unique();
             $table->foreignId('major_id')->constrained('majors')->restrictOnDelete();
             $table->foreignId('class_id')->constrained('academic_classes')->restrictOnDelete();
             $table->foreignId('mentor_id')->constrained('teachers')->restrictOnDelete();
             $table->foreignId('counselor_id')->constrained('users')->restrictOnDelete();
+            $table->foreignId('parent_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('parent_phone_number', 25)->nullable();
             $table->boolean('status_active')->default(true);
             $table->string('qr_identity_token', 64)->unique();

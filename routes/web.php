@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AcademicClassController;
+use App\Http\Controllers\Admin\AdminTryoutQuestionController;
 use App\Http\Controllers\Admin\AlterLmsController;
+use App\Http\Controllers\Admin\AttendanceScannerController as AdminAttendanceScannerController;
 use App\Http\Controllers\Admin\CounselingSlotController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\EnglishMasteryController;
-use App\Http\Controllers\Admin\HomeworkAssignmentController;
 use App\Http\Controllers\Admin\LessonScheduleController;
 use App\Http\Controllers\Admin\MajorController;
 use App\Http\Controllers\Admin\ParentController;
@@ -36,12 +37,15 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Student\SpeakingBookingController as StudentSpeakingBookingController;
 use App\Http\Controllers\Student\SpeakingTaskController as StudentSpeakingTaskController;
+use App\Http\Controllers\Student\StudentTryoutExamController;
 use App\Http\Controllers\Student\TryoutController as StudentTryoutController;
 use App\Http\Controllers\Student\VocabQuizController as StudentVocabQuizController;
 use App\Http\Controllers\Teacher\AttendanceSessionController as TeacherAttendanceSessionController;
 use App\Http\Controllers\Teacher\ConsultationSlotController as TeacherConsultationSlotController;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
+use App\Http\Controllers\Teacher\MapelController as TeacherMapelController;
 use App\Http\Controllers\Teacher\OralRubricController as TeacherOralRubricController;
+use App\Http\Controllers\Teacher\PembimbingController as TeacherPembimbingController;
 use App\Http\Controllers\Teacher\ScannerController as TeacherScannerController;
 use App\Http\Controllers\Teacher\SingleStudentProfileController as TeacherSingleStudentProfileController;
 use App\Http\Controllers\Teacher\VocabMonitoringController as TeacherVocabMonitoringController;
@@ -94,8 +98,11 @@ Route::middleware('auth')->group(function () {
             // Phase 4: English Mastery (Vocab CBT & Speaking Task)
             Route::prefix('english')->name('english.')->group(function () {
                 Route::get('/vocab-quiz', [StudentVocabQuizController::class, 'index'])->name('vocab.index');
+                Route::get('/vocab-essay', [StudentVocabQuizController::class, 'index'])->name('vocab.essay');
                 Route::get('/vocab-quiz/{module}', [StudentVocabQuizController::class, 'take'])->name('vocab.take');
+                Route::get('/vocab-essay/{module}', [StudentVocabQuizController::class, 'take'])->name('vocab.essay.take');
                 Route::post('/vocab-quiz/{module}', [StudentVocabQuizController::class, 'submit'])->name('vocab.submit');
+                Route::post('/vocab-essay/{module}', [StudentVocabQuizController::class, 'submit'])->name('vocab.essay.submit');
 
                 Route::get('/digital-tasks', [StudentSpeakingTaskController::class, 'index'])->name('tasks.index');
                 Route::get('/booking-setoran', [StudentSpeakingBookingController::class, 'create'])->name('speaking.booking');
@@ -110,12 +117,19 @@ Route::middleware('auth')->group(function () {
             // Phase 6: Evaluasi & Tryout SNBT
             Route::prefix('tryout')->name('tryout.')->group(function () {
                 Route::get('/', [StudentTryoutController::class, 'index'])->name('index');
+                Route::get('/{tryoutId}/take', [StudentTryoutExamController::class, 'take'])->name('take');
+                Route::post('/{tryoutId}/take', [StudentTryoutExamController::class, 'submit'])->name('submit');
                 Route::get('/{tryoutId}', [StudentTryoutController::class, 'show'])->name('show');
             });
 
             // Phase 6: Profil Akademik Terpadu
             Route::get('/profil', [StudentProfileController::class, 'index'])->name('profil');
+            Route::post('/profil/complete-nisn', [StudentProfileController::class, 'updateNisn'])->name('profil.update-nisn');
         });
+
+    Route::middleware(['auth', 'role:siswa'])->get('/tryout/{id}/take', fn ($id) => redirect()->route('siswa.tryout.take', $id));
+    Route::middleware(['auth', 'role:siswa'])->get('/english/vocab-essay', fn () => redirect()->route('siswa.english.vocab.index'));
+    Route::middleware(['auth', 'role:siswa'])->get('/english/vocab-essay/{module}', fn ($module) => redirect()->route('siswa.english.vocab.take', $module));
 
     /*
     |--------------------------------------------------------------------------
@@ -127,6 +141,12 @@ Route::middleware('auth')->group(function () {
         ->name('guru.')
         ->group(function () {
             Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
+
+            // Dual-Role Teacher Views
+            Route::get('/mapel', [TeacherMapelController::class, 'index'])->name('mapel.index');
+            Route::get('/pembimbing', [TeacherPembimbingController::class, 'index'])->name('pembimbing.index');
+            Route::post('/pembimbing/alerts/trigger', [TeacherPembimbingController::class, 'triggerMonthlyAlerts'])->name('pembimbing.alerts.trigger');
+            Route::post('/pembimbing/alerts/{alertId}/resolve', [TeacherPembimbingController::class, 'resolveAlert'])->name('pembimbing.alerts.resolve');
 
             // Presensi Kelas
             Route::get('/presensi/scan', [TeacherScannerController::class, 'index'])->name('presensi.scanner');
@@ -211,7 +231,7 @@ Route::middleware('auth')->group(function () {
     | ROLE: ADMIN (Central Management)
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['role:admin'])
+    Route::middleware(['role:admin|front_desk'])
         ->prefix('admin')
         ->name('admin.')
         ->group(function () {
@@ -229,9 +249,8 @@ Route::middleware('auth')->group(function () {
 
             // Operasional Akademik
             Route::resource('jadwal', LessonScheduleController::class);
-            Route::get('tugas/{tuga}/submissions', [HomeworkAssignmentController::class, 'submissions'])->name('tugas.submissions');
-            Route::post('tugas/grade/{submission}', [HomeworkAssignmentController::class, 'gradeSubmission'])->name('tugas.grade');
-            Route::resource('tugas', HomeworkAssignmentController::class);
+            Route::get('presensi/scan', [AdminAttendanceScannerController::class, 'index'])->name('presensi.scanner');
+            Route::post('presensi/scan', [AdminAttendanceScannerController::class, 'checkIn'])->name('presensi.scan.checkin');
 
             // Konten & Kurikulum (ALTER LMS, English Mastery, Tryout)
             Route::prefix('alter')->name('alter.')->group(function () {
@@ -261,6 +280,20 @@ Route::middleware('auth')->group(function () {
                 Route::delete('/wacana/{script}', [EnglishMasteryController::class, 'destroyWacana'])->name('wacana.destroy');
             });
 
+            // Tryout Question Management (Manual CRUD & Excel Bulk Import)
+            Route::get('tryouts/{id}/questions', [AdminTryoutQuestionController::class, 'index'])->name('tryouts.questions.index');
+            Route::post('tryouts/{id}/questions', [AdminTryoutQuestionController::class, 'store'])->name('tryouts.questions.store');
+            Route::put('tryouts/{id}/questions/{question}', [AdminTryoutQuestionController::class, 'update'])->name('tryouts.questions.update');
+            Route::delete('tryouts/{id}/questions/{question}', [AdminTryoutQuestionController::class, 'destroy'])->name('tryouts.questions.destroy');
+            Route::post('tryouts/{id}/questions/import-excel', [AdminTryoutQuestionController::class, 'importExcel'])->name('tryouts.questions.import');
+
+            Route::get('tryout/{id}/questions', [AdminTryoutQuestionController::class, 'index'])->name('tryout.questions.index');
+            Route::post('tryout/{id}/questions', [AdminTryoutQuestionController::class, 'store'])->name('tryout.questions.store');
+            Route::put('tryout/{id}/questions/{question}', [AdminTryoutQuestionController::class, 'update'])->name('tryout.questions.update');
+            Route::delete('tryout/{id}/questions/{question}', [AdminTryoutQuestionController::class, 'destroy'])->name('tryout.questions.destroy');
+            Route::post('tryout/{id}/questions/import-excel', [AdminTryoutQuestionController::class, 'importExcel'])->name('tryout.questions.import');
+
+            Route::get('tryouts', fn () => redirect()->route('admin.tryout.index'));
             Route::post('tryout/{tryout}/subtests', [AdminTryoutController::class, 'storeSubtest'])->name('tryout.subtest.store');
             Route::delete('tryout/subtests/{subtest}', [AdminTryoutController::class, 'destroySubtest'])->name('tryout.subtest.destroy');
             Route::resource('tryout', AdminTryoutController::class);

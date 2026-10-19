@@ -16,9 +16,11 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
             $table->foreignId('lesson_schedule_id')->nullable()->constrained('lesson_schedules')->nullOnDelete();
             $table->date('date');
+            $table->time('time_in')->nullable()->default('08:00:00');
             $table->time('session_time')->nullable()->default('08:00:00');
             $table->enum('status', ['hadir', 'terlambat', 'sakit', 'izin', 'alfa'])->default('hadir');
-            $table->foreignId('scanned_by_teacher_id')->constrained('teachers')->restrictOnDelete();
+            $table->foreignId('scanned_by_admin_id')->constrained('users')->restrictOnDelete();
+            $table->foreignId('scanned_by_teacher_id')->nullable()->constrained('teachers')->nullOnDelete();
             $table->string('remarks')->nullable();
             $table->timestamps();
 

@@ -77,10 +77,10 @@
                         <i class="fa-solid fa-calendar-days w-5 text-center mr-2.5 {{ request()->routeIs('admin.jadwal.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
                         <span>Jadwal Pelajaran</span>
                     </a>
-                    <a href="{{ route('admin.tugas.index') }}"
-                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.tugas.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
-                        <i class="fa-solid fa-book-open w-5 text-center mr-2.5 {{ request()->routeIs('admin.tugas.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
-                        <span>Tugas Rumah (PR)</span>
+                    <a href="{{ route('admin.presensi.scanner') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.presensi.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-qrcode w-5 text-center mr-2.5 {{ request()->routeIs('admin.presensi.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Scanner Meja Depan</span>
                     </a>
                 </nav>
             </div>
@@ -134,6 +134,20 @@
             </div>
         @endrole
 
+        @role('front_desk')
+            <!-- Front Desk Navigation Blocks -->
+            <div>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Meja Depan ALTO</p>
+                <nav class="space-y-1">
+                    <a href="{{ route('admin.presensi.scanner') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('admin.presensi.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-qrcode w-5 text-center mr-2.5 {{ request()->routeIs('admin.presensi.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Scanner Presensi Masuk</span>
+                    </a>
+                </nav>
+            </div>
+        @endrole
+
         @role('guru')
             <!-- Guru Navigation Blocks -->
             <div>
@@ -143,6 +157,22 @@
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('guru.dashboard') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
                         <i class="fa-solid fa-gauge-high w-5 text-center mr-2.5 {{ request()->routeIs('guru.dashboard') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
                         <span>Dashboard</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Dual-Role Guru &amp; Mentor</p>
+                <nav class="space-y-1">
+                    <a href="{{ route('guru.mapel.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('guru.mapel.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-chalkboard-user w-5 text-center mr-2.5 {{ request()->routeIs('guru.mapel.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Guru Mata Pelajaran</span>
+                    </a>
+                    <a href="{{ route('guru.pembimbing.index') }}"
+                        class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('guru.pembimbing.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
+                        <i class="fa-solid fa-graduation-cap w-5 text-center mr-2.5 {{ request()->routeIs('guru.pembimbing.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
+                        <span>Pembimbing Akademik (360°)</span>
                     </a>
                 </nav>
             </div>

@@ -9,13 +9,26 @@ class WacanaScript extends Model
 {
     use HasFactory;
 
+    protected $table = 'wacana_texts';
+
     protected $fillable = [
         'title',
-        'script_text',
+        'content',
         'paragraph_count',
+        'script_text',
     ];
 
     protected $casts = [
         'paragraph_count' => 'integer',
     ];
+
+    public function getScriptTextAttribute(): ?string
+    {
+        return $this->attributes['content'] ?? null;
+    }
+
+    public function setScriptTextAttribute(?string $val): void
+    {
+        $this->attributes['content'] = $val;
+    }
 }

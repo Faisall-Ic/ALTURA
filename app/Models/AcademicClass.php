@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,6 +40,40 @@ class AcademicClass extends Model
     }
 
     /**
+     * Deactivate TKA subjects for post-October curriculum transition (Rule 9).
+     */
+    public function deactivateTka(): void
+    {
+        $this->update(['is_tka_active' => false]);
+    }
+
+    /**
+     * Activate TKA subjects for pre-October curriculum (Rule 9).
+     */
+    public function activateTka(): void
+    {
+        $this->update(['is_tka_active' => true]);
+    }
+
+    /**
+     * Get available subjects based on is_tka_active state.
+     */
+    public function availableSubjects(): Collection
+    {
+        $major = $this->major;
+        if (! $major) {
+            return new Collection;
+        }
+
+        $query = $major->subjects();
+        if (! $this->is_tka_active) {
+            $query->where('is_tka', false);
+        }
+
+        return $query->get();
+    }
+
+    /**
      * Get the major that owns this academic class.
      */
     public function major(): BelongsTo
@@ -68,13 +103,5 @@ class AcademicClass extends Model
     public function lessonSchedules(): HasMany
     {
         return $this->hasMany(LessonSchedule::class, 'class_id');
-    }
-
-    /**
-     * Get the homework assignments for this class.
-     */
-    public function homeworkAssignments(): HasMany
-    {
-        return $this->hasMany(HomeworkAssignment::class, 'class_id');
     }
 }

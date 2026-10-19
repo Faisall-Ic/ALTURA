@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Models\AcademicClass;
 use App\Models\Major;
 use App\Models\Subject;
+use App\Models\SubjectConsultationSlot;
 use App\Models\Teacher;
 use App\Models\User;
 use Database\Seeders\RoleAndPermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class AdminDynamicCrudTest extends TestCase
@@ -99,24 +101,26 @@ class AdminDynamicCrudTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_manage_homework_assignments(): void
+    public function test_homework_is_removed_and_admin_manages_subject_consultation_slots(): void
     {
-        $response = $this->actingAs($this->adminUser)->get(route('admin.tugas.index'));
-        $response->assertStatus(200);
+        $this->assertFalse(Schema::hasTable('homework_assignments'));
+        $this->assertFalse(Schema::hasTable('homework_submissions'));
 
-        $storeResponse = $this->actingAs($this->adminUser)->post(route('admin.tugas.store'), [
-            'class_id' => $this->class->id,
+        $slot = SubjectConsultationSlot::create([
             'subject_id' => $this->subject->id,
             'teacher_id' => $this->teacher->id,
-            'title' => 'Tugas Matriks',
-            'instructions' => 'Kerjakan soal 1-10',
-            'due_date' => now()->addDays(3)->format('Y-m-d H:i:s'),
+            'created_by_admin_id' => $this->adminUser->id,
+            'topic' => 'Klinik Soal Penalaran Matematika',
+            'date_time' => now()->addDays(2),
+            'room_or_link' => 'Ruang Diskusi Lantai 2',
+            'max_quota' => 10,
+            'remaining_quota' => 10,
         ]);
-        $storeResponse->assertRedirect(route('admin.tugas.index'));
 
-        $this->assertDatabaseHas('homework_assignments', [
-            'title' => 'Tugas Matriks',
-            'class_id' => $this->class->id,
+        $this->assertDatabaseHas('subject_consultation_slots', [
+            'id' => $slot->id,
+            'created_by_admin_id' => $this->adminUser->id,
+            'topic' => 'Klinik Soal Penalaran Matematika',
         ]);
     }
 

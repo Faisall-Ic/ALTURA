@@ -452,6 +452,8 @@ class EnglishVocabSeeder extends Seeder
 
         foreach ($modulesData as $moduleNum => $words) {
             foreach ($words as $w) {
+                $acceptable = array_values(array_filter(array_map('trim', preg_split('/[\/,;]+/', $w[1]))));
+
                 VocabWord::firstOrCreate(
                     [
                         'module_number' => $moduleNum,
@@ -459,6 +461,7 @@ class EnglishVocabSeeder extends Seeder
                     ],
                     [
                         'indonesian_meaning' => $w[1],
+                        'acceptable_answers' => $acceptable,
                         'example_sentence' => $w[2],
                     ]
                 );

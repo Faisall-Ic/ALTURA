@@ -29,6 +29,16 @@ class UserSeeder extends Seeder
         );
         $admin->syncRoles(['admin']);
 
+        // 1b. Front Desk Admin (Kakak Administrasi - Rule 2)
+        $frontDesk = User::firstOrCreate(
+            ['email' => 'frontdesk@altura.test'],
+            [
+                'name' => 'Kakak Administrasi (Front Desk ALTO)',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $frontDesk->syncRoles(['admin', 'front_desk']);
+
         // 2. Counselor Kak Nisa (Guru BK)
         $counselor = User::firstOrCreate(
             ['email' => 'nisa.bk@altura.test'],
@@ -144,5 +154,31 @@ class UserSeeder extends Seeder
         $student->parents()->syncWithoutDetaching([
             $parentGuardian->id => ['relationship_type' => 'Ayah'],
         ]);
+
+        // 7. Student 2 with Nullable NISN (Rule 1: ALTO data can lack NISN)
+        $studentUser2 = User::firstOrCreate(
+            ['email' => 'dewi.siswa@altura.test'],
+            [
+                'name' => 'Dewi Lestari (NISN Belum Dilengkapi)',
+                'password' => Hash::make('password'),
+            ]
+        );
+        $studentUser2->syncRoles(['siswa']);
+
+        Student::firstOrCreate(
+            ['user_id' => $studentUser2->id],
+            [
+                'nisn' => null, // Explicit null NISN
+                'major_id' => $mipaMajor->id,
+                'class_id' => $class12Mipa1->id,
+                'mentor_id' => $teacher1->id,
+                'counselor_id' => $counselor->id,
+                'parent_user_id' => null,
+                'parent_phone_number' => '6281987654321',
+                'status_active' => true,
+                'qr_identity_token' => 'ALTURA-STD-DEWINT99',
+                'qr_code_token' => 'ALTURA-STD-DEWINT99',
+            ]
+        );
     }
 }

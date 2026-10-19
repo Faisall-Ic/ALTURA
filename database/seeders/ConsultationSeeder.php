@@ -25,12 +25,13 @@ class ConsultationSeeder extends Seeder
     {
         $teacher = Teacher::first();
         $student = Student::first();
+        $admin = User::role('admin')->first();
 
         if (! $teacher || ! $student) {
             return;
         }
 
-        // Slot 1: Active booked slot
+        // 1. Generic Consultation Slots (Backward compatibility)
         $slot1 = ConsultationSlot::firstOrCreate(
             [
                 'mentor_id' => $teacher->id,
@@ -56,35 +57,7 @@ class ConsultationSeeder extends Seeder
             ]
         );
 
-        // Slot 2: Open future slot with full quota
-        ConsultationSlot::firstOrCreate(
-            [
-                'mentor_id' => $teacher->id,
-                'topic' => 'Klinik Soal Literasi & TPS Skolastik Lanjutan',
-                'date_time' => Carbon::now()->addDays(4)->setHour(16)->setMinute(0)->setSecond(0),
-            ],
-            [
-                'max_quota' => 4,
-                'remaining_quota' => 4,
-                'location_or_link' => 'Ruang Bimbingan 1A',
-            ]
-        );
-
-        // Slot 3: Past completed slot
-        $pastSlot = ConsultationSlot::firstOrCreate(
-            [
-                'mentor_id' => $teacher->id,
-                'topic' => 'Evaluasi Hasil Tryout SNBT 1 & Pemetaan Materi Lemah',
-                'date_time' => Carbon::now()->subDays(5)->setHour(14)->setMinute(0)->setSecond(0),
-            ],
-            [
-                'max_quota' => 3,
-                'remaining_quota' => 2,
-                'location_or_link' => 'Ruang Konsultasi Alto Lantai 2',
-            ]
-        );
-
-        // Seed Subject Consultation (Tentoring Mata Pelajaran)
+        // 2. Subject Consultation Slots (Rule 6: Created Exclusively by ADMIN)
         $subject = Subject::where('code', 'PM')->first() ?? Subject::first();
         if ($subject) {
             $subjSlot = SubjectConsultationSlot::firstOrCreate(
@@ -94,6 +67,7 @@ class ConsultationSeeder extends Seeder
                     'date_time' => Carbon::now()->addDays(2)->setHour(15)->setMinute(30)->setSecond(0),
                 ],
                 [
+                    'created_by_admin_id' => $admin?->id,
                     'topic' => 'Tentoring Intensif TPS Penalaran Matematika',
                     'room_or_link' => 'Ruang Tentoring Alto Lantai 2',
                     'max_quota' => 5,
@@ -112,7 +86,7 @@ class ConsultationSeeder extends Seeder
             );
         }
 
-        // Seed Counseling Slot & Booking (Bimbingan Konseling BK - Kak Nisa)
+        // 3. Counseling Slot & Booking (BK - Kak Nisa, Rule 7: Max 5 bookings per student per semester)
         $counselorUser = User::where('email', 'nisa.bk@altura.test')->first();
         $parent = ParentGuardian::first();
         if ($counselorUser) {
@@ -135,6 +109,8 @@ class ConsultationSeeder extends Seeder
                 ],
                 [
                     'parent_id' => $parent?->id,
+                    'semester' => 1,
+                    'year' => 2026,
                     'booking_type' => 'siswa',
                     'notes' => 'Konsultasi strategi pemilihan prodi SNBP dan SNBT serta manajemen stres belajar.',
                     'status' => 'booked',

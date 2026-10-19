@@ -83,8 +83,20 @@
                                     </div>
                                 </div>
 
-                                <div class="mt-3 flex items-center justify-between text-xs text-neutral-muted font-mono">
-                                    <span>Peserta Selesai: <strong class="text-brand-primary">{{ $to->tryout_scores_count }} Siswa</strong></span>
+                                <div class="mt-3 pt-3 border-t border-neutral-border/60 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-neutral-muted font-mono">Peserta: <strong class="text-brand-primary">{{ $to->tryout_scores_count }} Siswa</strong></span>
+                                        <span class="text-neutral-muted">&bull;</span>
+                                        <span class="text-neutral-muted font-mono">Soal: <strong class="text-neutral-text">{{ $to->questions_count }} Butir</strong></span>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('admin.tryouts.questions.index', $to->id) }}"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-soft hover:bg-brand-primary hover:text-white text-brand-primary text-xs font-bold border border-brand-primary/20 shadow-2xs transition-all">
+                                            <i class="fa-solid fa-list-check text-xs"></i>
+                                            <span>Kelola Soal</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach

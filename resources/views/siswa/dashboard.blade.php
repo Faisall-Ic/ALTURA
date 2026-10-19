@@ -2,6 +2,25 @@
     <x-slot:title>Dashboard Siswa</x-slot:title>
 
     <div class="space-y-6">
+        @if ($student?->needsProfileCompletion())
+            <div class="rounded-2xl bg-amber-50 border border-amber-200 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+                <div class="flex items-start gap-3">
+                    <span class="p-2 rounded-xl bg-amber-100 text-amber-700 shrink-0">
+                        <i class="fa-solid fa-triangle-exclamation text-base"></i>
+                    </span>
+                    <div>
+                        <h2 class="text-sm font-bold text-amber-900">Lengkapi Profil Siswa (NISN Belum Terisi)</h2>
+                        <p class="text-xs text-amber-700 mt-0.5">
+                            Nomor Induk Siswa Nasional (NISN) Anda belum terdata. Lengkapi profil Anda untuk sinkronisasi Tryout CBT dan verifikasi SNBT.
+                        </p>
+                    </div>
+                </div>
+                <a href="{{ route('siswa.profil') }}" class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shrink-0 transition-colors">
+                    <i class="fa-solid fa-user-pen"></i> Lengkapi Profil
+                </a>
+            </div>
+        @endif
+
         <!-- Welcome Hero Banner -->
         <div class="relative overflow-hidden rounded-2xl bg-white border border-neutral-border shadow-xs p-6 sm:p-8">
             <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -29,7 +48,7 @@
 
                 @if ($student)
                     <div class="bg-surface border border-neutral-border rounded-xl p-4 text-xs space-y-1.5 min-w-[260px] shadow-2xs">
-                        <div class="text-neutral-muted">NISN: <span class="text-neutral-text font-mono font-bold">{{ $student->nisn }}</span></div>
+                        <div class="text-neutral-muted">NISN: <span class="font-mono font-bold {{ $student->nisn ? 'text-neutral-text' : 'text-amber-600 italic' }}">{{ $student->nisn ?: 'Belum Dilengkapi' }}</span></div>
                         <div class="text-neutral-muted">Jurusan: <span class="text-neutral-text font-semibold">{{ $student->major?->name }}</span></div>
                         <div class="text-neutral-muted">Guru Mentor: <span class="text-brand-primary font-bold">{{ $student->mentor?->user?->name ?? 'Belum Ditentukan' }}</span></div>
                         <div class="text-neutral-muted">Guru BK: <span class="text-purple-700 font-bold">{{ $student->counselor?->name ?? 'Kak Nisa' }}</span></div>
@@ -55,14 +74,14 @@
 
             <div class="bg-white rounded-2xl shadow-xs border border-neutral-border p-5">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Tugas Rumah</span>
-                    <span class="p-2.5 rounded-xl bg-amber-50 text-amber-700">
-                        <i class="fa-solid fa-book-open text-base"></i>
+                    <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Konsultasi</span>
+                    <span class="p-2.5 rounded-xl bg-purple-50 text-purple-700">
+                        <i class="fa-solid fa-comments text-base"></i>
                     </span>
                 </div>
                 <div class="mt-4">
-                    <div class="text-2xl font-bold text-neutral-text">{{ $assignments->count() }} Tugas</div>
-                    <span class="text-xs text-neutral-muted font-medium block mt-1">Perlu Dikerjakan</span>
+                    <div class="text-2xl font-bold text-neutral-text">Tentoring</div>
+                    <span class="text-xs text-neutral-muted font-medium block mt-1">Layanan Konsultasi Mapel</span>
                 </div>
             </div>
 
@@ -133,37 +152,30 @@
                 @endif
             </div>
 
-            <!-- Homework Assignments Section -->
+            <!-- Subject Consultations Section (Replaces PR) -->
             <div class="bg-white border border-neutral-border rounded-2xl p-6 shadow-xs space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-base font-bold text-neutral-text flex items-center gap-2">
-                        <i class="fa-solid fa-book-open text-amber-600"></i> Tugas Rumah Aktif
+                        <i class="fa-solid fa-comments text-brand-primary"></i> Layanan Konsultasi Mapel
                     </h2>
-                    <span class="text-xs text-neutral-muted">Tenggat Waktu</span>
+                    <a href="{{ route('siswa.konsultasi.index') }}" class="text-xs text-brand-primary font-semibold hover:underline">
+                        Lihat Semua Slot &rarr;
+                    </a>
                 </div>
 
-                @if ($assignments->isNotEmpty())
-                    <div class="space-y-2.5">
-                        @foreach ($assignments as $task)
-                            <div class="p-3 rounded-xl border border-neutral-border bg-surface text-xs space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-neutral-text">{{ $task->title }}</span>
-                                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-subtle text-neutral-text border border-neutral-border">
-                                        Due: {{ $task->due_date?->format('d M, H:i') }}
-                                    </span>
-                                </div>
-                                <div class="text-[11px] text-neutral-muted line-clamp-1">
-                                    {{ $task->instructions }}
-                                </div>
-                                <div class="text-[10px] text-brand-primary font-semibold pt-1">
-                                    {{ $task->subject?->name }} &bull; Pengampu: {{ $task->teacher?->user?->name ?? 'Guru' }}
-                                </div>
-                            </div>
-                        @endforeach
+                <div class="p-4 rounded-xl bg-brand-soft border border-brand-primary/10 text-xs text-neutral-text space-y-2">
+                    <div class="font-bold flex items-center gap-1.5 text-brand-primary">
+                        <i class="fa-solid fa-chalkboard-user"></i> Butuh Bedah Soal atau Tentoring Tambahan?
                     </div>
-                @else
-                    <p class="text-xs text-neutral-muted py-6 text-center">Tidak ada tugas rumah aktif saat ini.</p>
-                @endif
+                    <p class="text-neutral-muted leading-relaxed">
+                        Slot konsultasi mata pelajaran dibuka langsung oleh Admin ALTO bersama guru pengampu. Pilih jadwal yang sesuai untuk mendiskusikan materi pelajaran atau persiapan UTBK.
+                    </p>
+                    <div class="pt-1">
+                        <a href="{{ route('siswa.konsultasi.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-primary hover:bg-brand-navy text-white text-xs font-semibold transition-colors">
+                            <i class="fa-solid fa-calendar-plus text-[10px]"></i> Booking Konsultasi Mapel
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

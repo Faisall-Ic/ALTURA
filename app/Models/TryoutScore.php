@@ -22,6 +22,7 @@ class TryoutScore extends Model
         'subtest_indo',
         'subtest_inggris',
         'subtest_matematika',
+        'subtest_scores',
         'average_score',
     ];
 
@@ -37,6 +38,7 @@ class TryoutScore extends Model
             'subtest_indo' => 'float',
             'subtest_inggris' => 'float',
             'subtest_matematika' => 'float',
+            'subtest_scores' => 'array',
             'average_score' => 'float',
         ];
     }
