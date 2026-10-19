@@ -72,15 +72,15 @@
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-xs border border-neutral-border p-5">
-                        <div class="text-xs font-bold text-neutral-muted uppercase">Tugas Mandiri (PR)</div>
+                        <div class="text-xs font-bold text-neutral-muted uppercase">Slot Konsultasi Mapel</div>
                         <div class="mt-3 text-xl font-bold text-neutral-text">
-                            {{ $teacher?->homeworkAssignments->count() ?? 0 }} Penugasan
+                            {{ $teacher?->subjectConsultationSlots?->count() ?? 0 }} Sesi Terbuka
                         </div>
-                        <span class="text-[11px] text-neutral-muted mt-1 block">Tugas aktif di kelas yang diampu</span>
+                        <span class="text-[11px] text-neutral-muted mt-1 block">Jadwal tentoring akademik aktif</span>
                     </div>
                 </div>
 
-                <!-- 2 Column: Schedules & Homework Assignments -->
+                <!-- 2 Column: Schedules & Consultation Slots -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Lesson Schedules -->
                     <div class="bg-white rounded-2xl border border-neutral-border p-6 shadow-xs space-y-4">
@@ -88,7 +88,7 @@
                             <i class="fa-solid fa-calendar-days text-brand-primary"></i> Sesi Mengajar Mingguan
                         </h2>
 
-                        @if ($teacher && $teacher->lessonSchedules->isNotEmpty())
+                        @if ($teacher && $teacher->lessonSchedules && $teacher->lessonSchedules->isNotEmpty())
                             <div class="space-y-2.5">
                                 @foreach ($teacher->lessonSchedules as $sched)
                                     <div class="flex items-center justify-between p-3 rounded-xl border border-neutral-border bg-surface text-xs">
@@ -107,30 +107,36 @@
                         @endif
                     </div>
 
-                    <!-- Homework Assignments created -->
+                    <!-- Subject Consultation Slots -->
                     <div class="bg-white rounded-2xl border border-neutral-border p-6 shadow-xs space-y-4">
-                        <h2 class="text-base font-bold text-neutral-text flex items-center gap-2">
-                            <i class="fa-solid fa-book-open text-amber-600"></i> Tugas Rumah yang Diberikan
-                        </h2>
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-base font-bold text-neutral-text flex items-center gap-2">
+                                <i class="fa-solid fa-comments text-brand-primary"></i> Slot Konsultasi &amp; Tentoring
+                            </h2>
+                            <a href="{{ route('guru.konsultasi.index') }}" class="text-xs font-semibold text-brand-primary hover:underline">
+                                Kelola Slot &rarr;
+                            </a>
+                        </div>
 
-                        @if ($teacher && $teacher->homeworkAssignments->isNotEmpty())
+                        @if ($teacher && $teacher->subjectConsultationSlots && $teacher->subjectConsultationSlots->isNotEmpty())
                             <div class="space-y-2.5">
-                                @foreach ($teacher->homeworkAssignments as $hw)
+                                @foreach ($teacher->subjectConsultationSlots as $slot)
                                     <div class="p-3 rounded-xl border border-neutral-border bg-surface text-xs space-y-1">
                                         <div class="flex items-center justify-between">
-                                            <span class="font-bold text-neutral-text">{{ $hw->title }}</span>
-                                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-subtle text-neutral-text">
-                                                Due: {{ $hw->due_date?->format('d M, H:i') }}
+                                            <span class="font-bold text-neutral-text">{{ $slot->subject?->name ?? 'Konsultasi Mapel' }}</span>
+                                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-soft text-brand-primary font-bold">
+                                                {{ $slot->date?->format('d M Y') ?? $slot->day_of_week ?? '-' }} ({{ \Illuminate\Support\Str::substr($slot->time_start, 0, 5) }} - {{ \Illuminate\Support\Str::substr($slot->time_end, 0, 5) }})
                                             </span>
                                         </div>
-                                        <div class="text-[11px] text-neutral-muted">
-                                            {{ $hw->subject?->name }} &bull; {{ $hw->academicClass?->name }}
+                                        <div class="text-[11px] text-neutral-muted flex items-center justify-between">
+                                            <span>Kapasitas: {{ $slot->max_students ?? 1 }} Siswa</span>
+                                            <span class="text-neutral-text font-medium">{{ $slot->room ?? 'Ruang Tentoring' }}</span>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
                         @else
-                            <p class="text-xs text-neutral-muted py-6 text-center">Belum ada tugas rumah yang dibuat.</p>
+                            <p class="text-xs text-neutral-muted py-6 text-center">Belum ada slot tentoring yang dibuka.</p>
                         @endif
                     </div>
                 </div>
@@ -204,7 +210,7 @@
                                                 <span class="text-[10px] text-neutral-muted block">Hadir</span>
                                             </td>
                                             <td class="px-4 py-3.5 text-right">
-                                                <a href="{{ route('guru.profil.siswa', $mentee->id) }}"
+                                                <a href="{{ route('guru.bimbingan.student.profile', $mentee->id) }}"
                                                     class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-primary text-white hover:bg-brand-navy shadow-xs transition-colors">
                                                     <span>Profil 360°</span>
                                                     <i class="fa-solid fa-arrow-right text-[10px]"></i>

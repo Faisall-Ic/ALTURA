@@ -156,6 +156,7 @@ Route::middleware('auth')->group(function () {
 
             // Bimbingan & Profil 360°
             Route::get('/bimbingan/siswa/{student}', [TeacherSingleStudentProfileController::class, 'show'])->name('bimbingan.student.profile');
+            Route::get('/profil/siswa/{student}', [TeacherSingleStudentProfileController::class, 'show'])->name('profil.siswa');
 
             // Phase 4: Oral Evaluation Rubric & Vocab Monitoring
             Route::get('/bimbingan/oral-rubric/{bookingId}', [TeacherOralRubricController::class, 'edit'])->name('bimbingan.rubric.edit');

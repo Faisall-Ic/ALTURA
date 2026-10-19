@@ -162,4 +162,31 @@ class OverhaulVerificationTest extends TestCase
         $this->assertEquals('0091827364', $student->nisn);
         $this->assertFalse($student->needsProfileCompletion());
     }
+
+    /**
+     * Test all role dashboards render successfully with HTTP 200.
+     */
+    public function test_all_role_dashboards_render_successfully(): void
+    {
+        // 1. Admin
+        $admin = User::where('email', 'admin@altura.test')->firstOrFail();
+        $this->actingAs($admin)->get(route('admin.dashboard'))->assertStatus(200);
+
+        // 2. Guru (both Mapel and Mentor view modes)
+        $teacher = User::where('email', 'budi.guru@altura.test')->firstOrFail();
+        $this->actingAs($teacher)->get(route('guru.dashboard', ['view' => 'guru_mapel']))->assertStatus(200);
+        $this->actingAs($teacher)->get(route('guru.dashboard', ['view' => 'mentor']))->assertStatus(200);
+
+        // 3. Siswa
+        $siswa = User::where('email', 'siswa@altura.test')->firstOrFail();
+        $this->actingAs($siswa)->get(route('siswa.dashboard'))->assertStatus(200);
+
+        // 4. Guru BK
+        $bk = User::where('email', 'nisa.bk@altura.test')->firstOrFail();
+        $this->actingAs($bk)->get(route('bk.dashboard'))->assertStatus(200);
+
+        // 5. Ortu
+        $ortu = User::where('email', 'ortu@altura.test')->firstOrFail();
+        $this->actingAs($ortu)->get(route('ortu.dashboard'))->assertStatus(200);
+    }
 }
