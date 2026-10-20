@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             EnglishVocabSeeder::class,
             SpeakingTaskSeeder::class,
             TryoutSeeder::class,
+            AcademicOperationsSeeder::class,
             AttendanceFlagSeeder::class,
             WaMessageLogSeeder::class,
         ]);

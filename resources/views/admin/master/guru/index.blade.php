@@ -9,7 +9,7 @@
                     <span><i class="fa-solid fa-chalkboard-user text-brand-primary"></i> Master Data Guru & Mentor</span>
                 </h1>
                 <p class="text-xs text-neutral-muted mt-1">
-                    Kelola profil tenaga pengajar, akun sistem, dan pembagian mentor bimbingan.
+                    Kelola profil instruktur, pemetaan multi-subject, penugasan multi-class, dan mentor binaan.
                 </p>
             </div>
             <a href="{{ route('admin.guru.create') }}"
@@ -24,7 +24,7 @@
             <form action="{{ route('admin.guru.index') }}" method="GET" class="flex gap-3">
                 <div class="relative flex-1">
                     <input type="text" name="q" value="{{ $search }}"
-                        placeholder="Cari berdasarkan nama guru, email, NIP, atau mata pelajaran..."
+                        placeholder="Cari berdasarkan nama guru, email, NIP, no HP, atau mata pelajaran..."
                         class="w-full pl-10 pr-4 py-2 rounded-lg bg-surface border border-neutral-border text-neutral-text placeholder-neutral-muted text-xs focus:outline-none focus:border-brand-primary">
                     <i class="fa-solid fa-magnifying-glass text-neutral-muted absolute left-3.5 top-3 text-xs"></i>
                 </div>
@@ -46,29 +46,45 @@
                     <thead class="bg-neutral-subtle/70 text-neutral-muted uppercase tracking-wider border-b border-neutral-border font-semibold">
                         <tr>
                             <th class="px-5 py-3.5">Nama Guru / Mentor</th>
-                            <th class="px-5 py-3.5">Email Akun</th>
-                            <th class="px-5 py-3.5">NIP</th>
-                            <th class="px-5 py-3.5">Mata Pelajaran / Bidang</th>
-                            <th class="px-5 py-3.5">Siswa Bimbingan</th>
+                            <th class="px-5 py-3.5">Kontak & NIP</th>
+                            <th class="px-5 py-3.5">Mata Pelajaran Diampu</th>
+                            <th class="px-5 py-3.5">Kelas Diampu</th>
+                            <th class="px-5 py-3.5">Siswa Mentee</th>
                             <th class="px-5 py-3.5 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-border">
                         @forelse ($teachers as $teacher)
                             <tr class="hover:bg-neutral-subtle/50 transition-colors">
-                                <td class="px-5 py-4 font-semibold text-neutral-text">
-                                    {{ $teacher->user?->name }}
-                                </td>
-                                <td class="px-5 py-4 text-neutral-muted font-mono text-[11px]">
-                                    {{ $teacher->user?->email }}
-                                </td>
-                                <td class="px-5 py-4 font-mono text-brand-primary font-bold">
-                                    {{ $teacher->nip ?? '-' }}
+                                <td class="px-5 py-4">
+                                    <div class="font-semibold text-neutral-text">{{ $teacher->user?->name }}</div>
+                                    <div class="text-[11px] text-neutral-muted font-mono mt-0.5">{{ $teacher->user?->email }}</div>
                                 </td>
                                 <td class="px-5 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-brand-soft text-brand-primary border border-brand-primary/20">
-                                        {{ $teacher->specialization_subject }}
-                                    </span>
+                                    <div class="font-mono text-brand-primary font-bold">{{ $teacher->nip ?? '-' }}</div>
+                                    <div class="text-[11px] text-neutral-muted mt-0.5">{{ $teacher->phone_number ?? '-' }}</div>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <div class="flex flex-wrap gap-1 max-w-xs">
+                                        @forelse ($teacher->subjects as $subj)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-brand-soft text-brand-primary border border-brand-primary/20">
+                                                {{ $subj->code }}
+                                            </span>
+                                        @empty
+                                            <span class="text-neutral-muted text-[11px]">{{ $teacher->specialization_subject ?? 'Belum ada mapel' }}</span>
+                                        @endforelse
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <div class="flex flex-wrap gap-1 max-w-xs">
+                                        @forelse ($teacher->academicClasses as $cls)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-neutral-subtle text-neutral-text border border-neutral-border">
+                                                {{ $cls->name }}
+                                            </span>
+                                        @empty
+                                            <span class="text-neutral-muted text-[11px]">-</span>
+                                        @endforelse
+                                    </div>
                                 </td>
                                 <td class="px-5 py-4 font-bold text-neutral-text">
                                     {{ $teacher->mentees_count }} Siswa

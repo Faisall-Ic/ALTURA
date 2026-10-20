@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -50,11 +51,27 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the students counseled by this user.
+     * Get the parent guardian profile associated with the user.
+     */
+    public function parentGuardian(): HasOne
+    {
+        return $this->hasOne(ParentGuardian::class);
+    }
+
+    /**
+     * Get the students counseled by this user (counselor role).
      */
     public function counseledStudents(): HasMany
     {
         return $this->hasMany(Student::class, 'counselor_id');
+    }
+
+    /**
+     * Get the counseling slots opened by this counselor user.
+     */
+    public function counselingSlots(): HasMany
+    {
+        return $this->hasMany(CounselingSlot::class, 'counselor_user_id');
     }
 
     /**
@@ -63,6 +80,30 @@ class User extends Authenticatable
     public function children(): HasMany
     {
         return $this->hasMany(Student::class, 'parent_user_id');
+    }
+
+    /**
+     * Get attendances scanned by this admin user (Front Desk Admin - Rule 2).
+     */
+    public function scannedAttendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class, 'scanned_by_admin_id');
+    }
+
+    /**
+     * Get subject consultation slots created by this admin user (Rule 6).
+     */
+    public function createdSubjectConsultationSlots(): HasMany
+    {
+        return $this->hasMany(SubjectConsultationSlot::class, 'created_by_admin_id');
+    }
+
+    /**
+     * Self-referencing relation for backwards compatibility with legacy teacher-user eager loading.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'id');
     }
 
     /**

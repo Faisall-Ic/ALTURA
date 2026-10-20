@@ -63,9 +63,9 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
                             <label for="nisn" class="block text-xs font-semibold uppercase text-neutral-muted mb-2">
-                                NISN Siswa <span class="text-red-accent">*</span>
+                                NISN Siswa <span class="text-neutral-muted text-[11px] normal-case font-normal">(Opsional)</span>
                             </label>
-                            <input type="text" name="nisn" id="nisn" value="{{ old('nisn', $student->nisn) }}" required
+                            <input type="text" name="nisn" id="nisn" value="{{ old('nisn', $student->nisn) }}"
                                 class="w-full px-4 py-2.5 rounded-xl bg-surface border border-neutral-border text-neutral-text placeholder-neutral-muted text-xs font-mono focus:outline-none focus:border-brand-primary">
                             @error('nisn')
                                 <p class="text-xs text-red-accent mt-1">{{ $message }}</p>

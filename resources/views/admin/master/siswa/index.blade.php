@@ -131,7 +131,7 @@
                                     <div class="text-[11px] text-neutral-muted font-mono">{{ $student->user?->email }}</div>
                                 </td>
                                 <td class="px-5 py-4">
-                                    <div class="font-mono text-brand-primary font-bold">{{ $student->nisn }}</div>
+                                    <div class="font-mono {{ $student->nisn ? 'text-brand-primary font-bold' : 'text-amber-600 font-medium italic text-xs' }}">{{ $student->nisn ?: 'Belum Dilengkapi' }}</div>
                                     <div class="text-[10px] text-neutral-muted font-mono">{{ $student->qr_identity_token }}</div>
                                 </td>
                                 <td class="px-5 py-4">

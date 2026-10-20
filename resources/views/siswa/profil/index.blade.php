@@ -41,7 +41,18 @@
                         </div>
                         <div class="p-4 rounded-xl bg-neutral-subtle/50 border border-neutral-border">
                             <span class="text-neutral-muted block mb-1 text-[11px] font-semibold uppercase tracking-wider">Nomor Induk Siswa Nasional (NISN)</span>
-                            <span class="text-base font-mono font-extrabold text-brand-primary">{{ $student->nisn }}</span>
+                            @if ($student->nisn)
+                                <span class="text-base font-mono font-extrabold text-brand-primary">{{ $student->nisn }}</span>
+                            @else
+                                <form method="POST" action="{{ route('siswa.profil.update-nisn') }}" class="flex items-center gap-2 mt-1">
+                                    @csrf
+                                    <input type="text" name="nisn" required placeholder="Masukkan 10 Digit NISN"
+                                        class="px-3 py-1.5 rounded-lg border border-amber-300 text-xs font-mono font-bold text-neutral-text focus:outline-none focus:border-brand-primary">
+                                    <button type="submit" class="px-3 py-1.5 rounded-lg bg-brand-primary text-white text-xs font-bold shadow-2xs hover:bg-brand-navy">
+                                        Simpan
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                         <div class="p-4 rounded-xl bg-neutral-subtle/50 border border-neutral-border">
                             <span class="text-neutral-muted block mb-1 text-[11px] font-semibold uppercase tracking-wider">Kelas &amp; Rombongan Belajar</span>

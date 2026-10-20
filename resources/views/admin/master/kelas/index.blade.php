@@ -9,7 +9,7 @@
                     <span><i class="fa-solid fa-school text-brand-primary"></i> Master Data Kelas (Rombel)</span>
                 </h1>
                 <p class="text-xs text-neutral-muted mt-1">
-                    Kelola rombongan belajar dan pemetaan terhadap jurusan masing-masing.
+                    Kelola rombongan belajar, tingkatan kelas, dan status kurikulum TKA / SNBT Focus.
                 </p>
             </div>
             <a href="{{ route('admin.kelas.create') }}"
@@ -58,8 +58,10 @@
                     <thead class="bg-neutral-subtle/70 text-neutral-muted uppercase tracking-wider border-b border-neutral-border font-semibold">
                         <tr>
                             <th class="px-5 py-3.5">Nama Kelas</th>
+                            <th class="px-5 py-3.5">Tingkat</th>
                             <th class="px-5 py-3.5">Kode Rombel</th>
                             <th class="px-5 py-3.5">Jurusan Induk</th>
+                            <th class="px-5 py-3.5">Status TKA</th>
                             <th class="px-5 py-3.5">Siswa Terdaftar</th>
                             <th class="px-5 py-3.5 text-right">Aksi</th>
                         </tr>
@@ -68,11 +70,27 @@
                         @forelse ($classes as $class)
                             <tr class="hover:bg-neutral-subtle/50 transition-colors">
                                 <td class="px-5 py-4 font-semibold text-neutral-text">{{ $class->name }}</td>
+                                <td class="px-5 py-4">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-neutral-subtle text-neutral-text border border-neutral-border">
+                                        Kelas {{ $class->grade_level ?? 12 }}
+                                    </span>
+                                </td>
                                 <td class="px-5 py-4 font-mono text-brand-primary font-bold">{{ $class->code }}</td>
                                 <td class="px-5 py-4">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-brand-soft text-brand-primary border border-brand-primary/20">
                                         {{ $class->major?->name }} ({{ $class->major?->code }})
                                     </span>
+                                </td>
+                                <td class="px-5 py-4">
+                                    @if ($class->is_tka_active)
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <i class="fa-solid fa-check text-[9px]"></i> TKA Aktif
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                            <i class="fa-solid fa-shield text-[9px]"></i> SNBT Only
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-5 py-4 font-bold text-neutral-text">{{ $class->students_count }} Siswa</td>
                                 <td class="px-5 py-4 text-right space-x-1">
@@ -91,7 +109,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-5 py-8 text-center text-neutral-muted">
+                                <td colspan="7" class="px-5 py-8 text-center text-neutral-muted">
                                     Belum ada rombongan belajar yang terdaftar.
                                 </td>
                             </tr>

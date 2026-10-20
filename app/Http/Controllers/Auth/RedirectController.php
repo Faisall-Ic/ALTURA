@@ -33,6 +33,10 @@ class RedirectController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         }
 
+        if ($user->hasRole('front_desk')) {
+            return redirect()->intended(route('admin.presensi.scanner'));
+        }
+
         if ($user->hasRole('guru')) {
             return redirect()->intended(route('guru.dashboard'));
         }

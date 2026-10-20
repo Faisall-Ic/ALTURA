@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Student;
+use App\Models\VocabModule;
 use App\Models\VocabQuizResult;
 use App\Models\VocabWord;
 use Illuminate\Database\Seeder;
@@ -438,8 +439,21 @@ class EnglishVocabSeeder extends Seeder
             ],
         ];
 
+        for ($m = 1; $m <= 8; $m++) {
+            VocabModule::firstOrCreate(
+                ['module_number' => $m],
+                [
+                    'title' => "Modul Kosakata {$m}",
+                    'description' => "Evaluasi CBT Kosakata Akademik Bahasa Inggris Modul {$m} (50 Kata).",
+                    'target_word_count' => 50,
+                ]
+            );
+        }
+
         foreach ($modulesData as $moduleNum => $words) {
             foreach ($words as $w) {
+                $acceptable = array_values(array_filter(array_map('trim', preg_split('/[\/,;]+/', $w[1]))));
+
                 VocabWord::firstOrCreate(
                     [
                         'module_number' => $moduleNum,
@@ -447,6 +461,7 @@ class EnglishVocabSeeder extends Seeder
                     ],
                     [
                         'indonesian_meaning' => $w[1],
+                        'acceptable_answers' => $acceptable,
                         'example_sentence' => $w[2],
                     ]
                 );
