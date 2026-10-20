@@ -15,11 +15,6 @@
                         Monitoring Pencapaian Modul Vocab, Ujian Praktik Speaking, Skor Tryout SNBT, dan Kehadiran
                     </p>
                 </div>
-                <div>
-                    <a href="{{ route('bk.dashboard') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-neutral-subtle hover:bg-neutral-border/60 text-neutral-text text-xs font-semibold border border-neutral-border transition-all">
-                        <i class="fa-solid fa-arrow-left text-[11px]"></i> Dashboard Guru BK
-                    </a>
-                </div>
             </div>
         </div>
 
@@ -44,11 +39,10 @@
                         <tr>
                             <th class="px-4 py-3">Nama Siswa</th>
                             <th class="px-4 py-3">Kelas & Jurusan</th>
-                            <th class="px-4 py-3">Kehadiran (%)</th>
-                            <th class="px-4 py-3">Vocab Mastery</th>
+                            <th class="px-4 py-3">Kehadiran</th>
+                            <th class="px-4 py-3">Vocab</th>
                             <th class="px-4 py-3">Ujian Speaking</th>
-                            <th class="px-4 py-3">Rerata Tryout SNBT</th>
-                            <th class="px-4 py-3 text-right">Aksi</th>
+                            <th class="px-4 py-3">Tryout SNBT</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-neutral-border">
@@ -105,11 +99,6 @@
                                     @else
                                         <span class="text-xs text-neutral-muted">Belum ada skor</span>
                                     @endif
-                                </td>
-                                <td class="px-4 py-3.5 text-right">
-                                    <a href="{{ route('guru.bimbingan.student.profile', $s->id) }}" class="inline-flex items-center gap-1 text-xs text-brand-primary hover:text-brand-navy font-semibold transition-colors">
-                                        Rincian <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                                    </a>
                                 </td>
                             </tr>
                         @empty

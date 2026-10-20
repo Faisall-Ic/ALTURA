@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Counselor;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicClass;
+use App\Models\Attendance; // 1. Tambahkan import model Attendance di sini
 use App\Models\Major;
 use App\Models\Student;
 use App\Services\AttendanceCalculatorService;
@@ -74,5 +75,21 @@ class AttendanceReportController extends Controller
             'totalWarning',
             'totalCritical'
         ));
-    }
+    } // 2. Tutup fungsi index() di sini
+
+    /**
+     * Display detail attendance history for a specific student.
+     */
+    public function show($studentId): View
+{
+    $student = Student::with(['user', 'academicClass', 'major'])->findOrFail($studentId);
+
+    $attendances = Attendance::with(['scannedBy.user'])
+        ->where('student_id', $studentId)
+        ->latest()
+        ->get();
+
+    // Sesuaikan nama view di sini:
+    return view('guru_bk.rekap.detail_presensi', compact('student', 'attendances'));
 }
+} // 4. Tutup kelas AttendanceReportController di sini

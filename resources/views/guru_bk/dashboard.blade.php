@@ -18,20 +18,6 @@
                         Sistem Monitoring Matriks Kesehatan Kehadiran, Flagging Otomatis, dan Konsultasi Wali Murid
                     </p>
                 </div>
-
-                <div class="flex flex-wrap items-center gap-3">
-                    <a href="{{ route('bk.flagging.index') }}" class="px-4 py-2.5 rounded-xl bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-bold shadow-md transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-triangle-exclamation text-accent-gold"></i>
-                        <span>Kotak Flagging</span>
-                        @if ($openFlagsCount > 0)
-                            <span class="px-2 py-0.5 rounded-full bg-accent-red text-white text-[10px] font-extrabold">{{ $openFlagsCount }}</span>
-                        @endif
-                    </a>
-                    <a href="{{ route('bk.konsultasi.sessions') }}" class="px-4 py-2.5 rounded-xl bg-white hover:bg-[#FFFAF3] text-neutral-dark text-xs font-bold border border-neutral-border shadow-2xs transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-hand-holding-heart text-purple-600"></i>
-                        <span>Sesi Konsultasi</span>
-                    </a>
-                </div>
             </div>
         </div>
 
@@ -65,7 +51,7 @@
             <a href="{{ route('bk.rekap.presensi', ['color' => 'red']) }}" class="group bg-white rounded-xl shadow-sm border border-neutral-border/60 hover:border-rose-500 p-5 border-l-4 border-l-rose-500 transition-all">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-rose-700 uppercase tracking-wider inline-flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Kritis (&lt; 75%)
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Danger (&lt; 75%)
                     </span>
                     <i class="fa-solid fa-arrow-right text-xs text-neutral-muted group-hover:text-rose-600 transition-colors"></i>
                 </div>
@@ -77,7 +63,7 @@
             <a href="{{ route('bk.flagging.index', ['status' => 'open']) }}" class="group bg-white rounded-xl shadow-sm border border-neutral-border/60 hover:border-purple-500 p-5 border-l-4 border-l-purple-500 transition-all">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-purple-700 uppercase tracking-wider inline-flex items-center gap-1.5">
-                        <i class="fa-solid fa-triangle-exclamation text-xs"></i> Open Flags Alert
+                        <i class="fa-solid fa-triangle-exclamation text-xs"></i> Pelanggaran
                     </span>
                     <i class="fa-solid fa-arrow-right text-xs text-neutral-muted group-hover:text-purple-600 transition-colors"></i>
                 </div>
@@ -93,7 +79,7 @@
                     <div>
                         <h2 class="text-lg font-bold text-neutral-dark flex items-center gap-2">
                             <i class="fa-solid fa-triangle-exclamation text-accent-red"></i>
-                            Antrean Flagging Otomatis Terkini
+                            Pelanggaran Siswa
                         </h2>
                         <p class="text-xs text-neutral-muted">Deteksi otomatis keterlambatan berulang &amp; ketidakhadiran kritis</p>
                     </div>
@@ -149,7 +135,7 @@
                 @else
                     <div class="py-10 text-center text-neutral-muted bg-[#FFFAF3] rounded-xl border border-neutral-border">
                         <i class="fa-solid fa-circle-check text-emerald-600 text-3xl block mb-2"></i>
-                        <p class="text-sm font-bold text-neutral-dark">Semua Indikator Flagging Bersih</p>
+                        <p class="text-sm font-bold text-neutral-dark">Semua Indikator Pelanggaran Bersih</p>
                         <p class="text-xs text-neutral-muted mt-1">Tidak ada ananda yang membutuhkan intervensi darurat saat ini.</p>
                     </div>
                 @endif
@@ -278,7 +264,7 @@
                                 </td>
                                 <td class="px-4 py-3.5 text-right">
                                     <a href="{{ route('guru.bimbingan.student.profile', $student->id) }}" class="text-xs text-brand-blue hover:underline font-bold">
-                                        Profil 360° &rarr;
+                                        Detail
                                     </a>
                                 </td>
                             </tr>

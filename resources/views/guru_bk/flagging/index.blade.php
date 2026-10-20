@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <x-slot:title>Kotak Flagging Otomatis & Alert Konseling</x-slot:title>
+    <x-slot:title>Pelanggaran Siswa Otomatis & Alert Konseling</x-slot:title>
 
     <div class="space-y-6">
         <!-- Header Banner -->
@@ -8,20 +8,15 @@
                 <div>
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-soft text-brand-primary border border-brand-primary/20 mb-3">
                         <span class="w-2 h-2 rounded-full bg-brand-primary"></span>
-                        Automated Early Warning System (EWS)
+                        Sistem Peringatan Siswa
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-bold text-neutral-text flex items-center gap-2">
-                        <span>Kotak Flagging Siswa Berisiko</span>
+                        <span>Pelanggaran Siswa Berisiko</span>
                         <i class="fa-solid fa-triangle-exclamation text-red-accent text-xl"></i>
                     </h1>
                     <p class="text-neutral-muted text-sm mt-1">
                         Daftar indikator keterlambatan berturut-turut, ketidakhadiran kritis, dan ketertinggalan modul untuk tindak lanjut Guru BK.
                     </p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('bk.dashboard') }}" class="px-4 py-2 rounded-xl bg-white hover:bg-neutral-subtle text-neutral-text text-xs font-semibold border border-neutral-border transition-all shadow-sm">
-                        <i class="fa-solid fa-arrow-left mr-1.5"></i> Kembali ke Dashboard
-                    </a>
                 </div>
             </div>
         </div>

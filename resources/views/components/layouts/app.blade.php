@@ -19,7 +19,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
 
     <!-- Styles & Tailwind -->
-    @if (file_exists(public_path('build/manifest.json')))
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>

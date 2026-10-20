@@ -212,18 +212,18 @@
                     <a href="{{ route('bk.dashboard') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('bk.dashboard') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
                         <i class="fa-solid fa-gauge-high w-5 text-center mr-2.5 {{ request()->routeIs('bk.dashboard') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
-                        <span>Dashboard &amp; Matriks</span>
+                        <span>Dashboard</span>
                     </a>
                 </nav>
             </div>
 
             <div>
-                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Early Warning System</p>
+                <p class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider px-3 mb-2">Sistem Peringatan</p>
                 <nav class="space-y-1">
                     <a href="{{ route('bk.flagging.index') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('bk.flagging.*') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
                         <i class="fa-solid fa-triangle-exclamation w-5 text-center mr-2.5 {{ request()->routeIs('bk.flagging.*') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
-                        <span>Kotak Flagging EWS</span>
+                        <span>Pelanggaran Siswa</span>
                     </a>
                 </nav>
             </div>
@@ -234,7 +234,7 @@
                     <a href="{{ route('bk.rekap.presensi') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('bk.rekap.presensi') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">
                         <i class="fa-solid fa-clipboard-check w-5 text-center mr-2.5 {{ request()->routeIs('bk.rekap.presensi') ? 'text-brand-primary' : 'text-neutral-muted' }}"></i>
-                        <span>Rekapitulasi Presensi</span>
+                        <span>Rekap Presensi</span>
                     </a>
                     <a href="{{ route('bk.rekap.target') }}"
                         class="flex items-center px-3 py-2.5 rounded-xl text-xs transition-all {{ request()->routeIs('bk.rekap.target') ? 'bg-brand-soft text-brand-primary font-bold border-l-4 border-brand-primary shadow-2xs' : 'text-neutral-muted hover:bg-neutral-subtle hover:text-neutral-text font-medium' }}">

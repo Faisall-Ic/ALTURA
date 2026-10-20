@@ -157,9 +157,12 @@ Route::middleware('auth')->group(function () {
                 Route::post('/resolve/{flagId}', [CounselorAlertFlagController::class, 'resolve'])->name('resolve');
             });
 
-            // Rekapitulasi Akademik
             Route::prefix('rekap')->name('rekap.')->group(function () {
                 Route::get('/presensi', [CounselorAttendanceReportController::class, 'index'])->name('presensi');
+
+                // Samakan nama route di sini:
+                Route::get('/presensi/{studentId}', [CounselorAttendanceReportController::class, 'show'])->name('detail_presensi');
+
                 Route::get('/target-bulanan', [CounselorTargetRecapController::class, 'index'])->name('target');
             });
 
